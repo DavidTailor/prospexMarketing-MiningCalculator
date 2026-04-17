@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)https://costofcapitalcalculator.netlify.app/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProspEx — Equity vs Royalty Calculator</title>
+<link href="./ProspEx — Equity vs Royalty Calculator_orginal_files/css2" rel="stylesheet">
+<style>
+:root {
+  --navy:     #002a54;
+  --navy-d:   #001830;
+  --navy-m:   #003a70;
+  --gold:     #bd9653;
+  --gold-lt:  #d4b07a;
+  --gold-pale:#f7f2e8;
+  --cream:    #f9f7f3;
+  --white:    #ffffff;
+  --bdr:      rgba(0,42,84,.09);
+  --bdr-m:    rgba(0,42,84,.15);
+  --t1:       #001f40;
+  --t2:       #3d5470;
+  --t3:       #7a8fa8;
+  --bull-d:   #145230;
+  --bull-m:   #1e7a4a;
+  --bull-lt:  #e6f5ed;
+  --bear-d:   #7a1515;
+  --bear-m:   #b52b2b;
+  --bear-lt:  #faeaea;
+  --sh:       0 1px 8px rgba(0,42,84,.07);
+  --sh-m:     0 4px 24px rgba(0,42,84,.11);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:14px;}
+body{font-family:'Red Hat Text',sans-serif;background:var(--cream);color:var(--t1);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* HEADER */
+.hdr{background:var(--navy-d);border-bottom:2px solid var(--gold);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;}
+.hdr-l{display:flex;align-items:center;gap:12px;}
+.hex{width:28px;height:28px;background:var(--gold);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;font-family:'Red Hat Display',sans-serif;font-weight:900;font-size:11px;color:var(--navy-d);}
+.hdr-name{font-family:'Red Hat Display',sans-serif;font-weight:700;font-size:16px;color:#fff;}
+.hdr-sep{width:1px;height:16px;background:rgba(189,150,83,.3);}
+.hdr-sub{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold-lt);}
+.hdr-note{font-size:10px;color:rgba(255,255,255,.3);font-style:italic;}
+
+/* LAYOUT */
+.wrap{max-width:1120px;margin:0 auto;padding:28px 24px 72px;}
+.intro{margin-bottom:22px;}
+.intro h1{font-family:'Red Hat Display',sans-serif;font-size:21px;font-weight:800;color:#002a54;margin-bottom:5px;}
+.intro p{font-size:12px;color:#3d5470;line-height:1.65;max-width:660px;}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start;}
+
+/* INPUT PANEL */
+.inp-panel{background:var(--white);border:1px solid var(--bdr);border-radius:10px;box-shadow:var(--sh-m);overflow:hidden;position:sticky;top:16px;}
+.inp-hd{background:var(--navy);padding:16px 20px;}
+.inp-hd-title{font-family:'Red Hat Display',sans-serif;font-size:13px;font-weight:800;color:#fff;margin-bottom:2px;}
+.inp-hd-sub{font-size:10.5px;color:rgba(255,255,255,.4);}
+.inp-body{padding:18px 20px;display:flex;flex-direction:column;gap:15px;}
+.sec-lbl{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--t3);}
+.divider{height:1px;background:var(--bdr);margin:2px 0;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.f-lbl{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--t2);}
+.f-hint{font-size:10px;color:var(--t3);font-style:italic;line-height:1.4;}
+.f-row{display:flex;align-items:center;border:1.5px solid var(--bdr-m);border-radius:6px;overflow:hidden;transition:border-color .15s,box-shadow .15s;}
+.f-row:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(189,150,83,.12);}
+.pfx,.sfx{padding:0 10px;font-size:11px;font-weight:600;color:var(--t3);background:#f4f6f9;height:38px;display:flex;align-items:center;border-right:1px solid var(--bdr);flex-shrink:0;}
+.sfx{border-right:none;border-left:1px solid var(--bdr);}
+.fi{flex:1;border:none;outline:none;padding:0 10px;height:38px;font-family:'Red Hat Display',sans-serif;font-size:14px;font-weight:700;color:var(--t1);background:var(--white);min-width:0;}
+.fi[type=text]{text-transform:uppercase;letter-spacing:1px;}
+.fi[type=month]{font-size:13px;}
+
+/* Ticker */
+.ticker-row{display:flex;gap:8px;}
+.ticker-row .f-row{flex:1;}
+.lup-btn{background:var(--navy);color:#fff;border:none;border-radius:6px;padding:0 14px;font-family:'Red Hat Display',sans-serif;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap;transition:background .15s;flex-shrink:0;height:38px;}
+.lup-btn:hover{background:var(--navy-m);}
+.lup-btn:disabled{opacity:.5;cursor:not-allowed;}
+.s-bar{display:none;margin-top:6px;padding:7px 10px;border-radius:5px;font-size:10.5px;font-weight:600;line-height:1.4;}
+.s-bar.ok{background:var(--bull-lt);color:var(--bull-d);border:1px solid rgba(20,82,48,.15);}
+.s-bar.err{background:var(--bear-lt);color:var(--bear-d);border:1px solid rgba(181,43,43,.14);}
+.s-bar.loading{background:#eef4ff;color:#1e40af;border:1px solid rgba(30,64,175,.14);}
+
+/* Sliders */
+.sl-live{font-family:'Red Hat Display',sans-serif;font-size:13px;font-weight:800;color:var(--navy);text-align:center;margin-bottom:3px;}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;background:#e4e9f0;border-radius:3px;cursor:pointer;margin:2px 0;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--navy);border:2px solid var(--gold);margin-top:-6px;box-shadow:0 1px 4px rgba(0,0,0,.18);transition:transform .1s;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
+.sl-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:2px;}
+
+/* Mode toggle */
+.mode-tog{display:flex;background:#eef1f6;border-radius:20px;padding:3px;gap:2px;}
+.mode-btn{border:none;cursor:pointer;padding:4px 12px;border-radius:16px;font-family:'Red Hat Display',sans-serif;font-size:9.5px;font-weight:800;transition:all .15s;background:transparent;color:var(--t3);}
+.mode-btn.on{background:var(--navy);color:#fff;}
+.derived{font-size:10.5px;font-weight:700;color:var(--t2);}
+.derived span{color:var(--navy);font-family:'Red Hat Display',sans-serif;}
+
+/* RESULTS */
+.results{display:flex;flex-direction:column;gap:16px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* Card */
+.card{background:var(--white);border:1px solid var(--bdr);border-radius:10px;box-shadow:var(--sh);overflow:hidden;}
+.card-hd{padding:12px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--bdr);}
+.card-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.card-title{font-family:'Red Hat Display',sans-serif;font-size:13px;font-weight:800;color:var(--t1);}
+.bdg{margin-left:auto;padding:3px 8px;border-radius:3px;font-size:8.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;}
+.bdg.bad{background:var(--bear-lt);color:var(--bear-d);border:1px solid rgba(181,43,43,.14);}
+.bdg.good{background:var(--bull-lt);color:var(--bull-d);border:1px solid rgba(30,122,74,.14);}
+.bdg.gold{background:var(--gold-pale);color:#7a5a10;border:1px solid rgba(189,150,83,.24);}
+
+/* Metrics */
+.metrics{display:flex;flex-direction:column;}
+.met{padding:11px 18px;border-bottom:1px solid rgba(0,42,84,.05);display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+.met:last-child{border-bottom:none;}
+.met-lbl{font-size:10.5px;color:var(--t2);line-height:1.3;flex:1;}
+.met-sub{font-size:9.5px;color:var(--t3);font-style:italic;margin-top:1px;}
+.met-val{font-family:'Red Hat Display',sans-serif;font-size:16px;font-weight:800;white-space:nowrap;flex-shrink:0;}
+.met-val.bad{color:var(--bear-d);}
+.met-val.good{color:var(--bull-d);}
+.met-val.gold{color:var(--gold);}
+.met-val.navy{color:var(--navy);}
+.met-hl{background:#fdf5f5;}
+.met-hlg{background:#f3fbf6;}
+
+/* Ownership */
+.own-wrap{padding:16px 18px;}
+.own-title{font-family:'Red Hat Display',sans-serif;font-size:12px;font-weight:800;color:var(--t1);margin-bottom:3px;}
+.own-sub{font-size:10.5px;color:var(--t3);margin-bottom:12px;}
+.own-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.own-lbl{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:6px;}
+.own-bar{height:44px;border-radius:5px;overflow:hidden;display:flex;}
+.own-seg{display:flex;align-items:center;justify-content:center;font-family:'Red Hat Display',sans-serif;font-size:11px;font-weight:800;color:#fff;overflow:hidden;white-space:nowrap;padding:0 8px;transition:width .75s cubic-bezier(.16,1,.3,1);}
+.own-leg{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;}
+.own-leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2);}
+.own-leg-dot{width:9px;height:9px;border-radius:2px;}
+
+/* Chart */
+.chart-wrap{padding:18px 20px;}
+.ct-title{font-family:'Red Hat Display',sans-serif;font-size:13px;font-weight:800;color:var(--t1);margin-bottom:2px;}
+.ct-sub{font-size:10.5px;color:var(--t3);margin-bottom:16px;}
+.bar-rows{display:flex;flex-direction:column;gap:12px;}
+.bar-row{display:flex;align-items:center;gap:10px;}
+.bar-lbl{width:126px;flex-shrink:0;}
+.bar-lbl-main{font-size:11.5px;font-weight:700;color:var(--t2);}
+.bar-lbl-sub{font-size:9px;color:var(--t3);margin-top:1px;}
+.bar-row-inner{flex:1;display:flex;align-items:center;gap:8px;}
+.bar-track{flex:1;height:34px;background:#f0f3f7;border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding:0 10px;font-family:'Red Hat Display',sans-serif;font-size:11px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;transition:width .9s cubic-bezier(.16,1,.3,1);}
+.bar-out{font-family:'Red Hat Display',sans-serif;font-size:11px;font-weight:800;white-space:nowrap;display:none;flex-shrink:0;}
+.chart-key{margin-top:10px;padding:9px 12px;background:#f5f7fa;border-radius:5px;font-size:10px;color:var(--t3);line-height:1.6;}
+.chart-key strong{color:var(--t2);}
+.sav-box{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:11px 14px;border-radius:7px;}
+.sav-box.win{background:var(--bull-lt);border:1px solid rgba(30,122,74,.17);}
+.sav-box.loss{background:var(--bear-lt);border:1px solid rgba(181,43,43,.14);}
+.sav-ico{font-size:15px;flex-shrink:0;}
+.sav-txt{font-size:11.5px;font-weight:600;line-height:1.55;}
+.sav-txt.win{color:var(--bull-d);}
+.sav-txt.loss{color:var(--bear-d);}
+
+/* NAV note */
+.nav-note{padding:11px 18px;background:var(--gold-pale);border-top:1px solid rgba(189,150,83,.2);font-size:11px;color:var(--t2);line-height:1.6;}
+
+/* Verdict */
+.verdict{background:var(--navy);border-radius:10px;padding:20px 22px;box-shadow:var(--sh-m);}
+.v-eye{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(189,150,83,.7);margin-bottom:7px;}
+.v-head{font-family:'Red Hat Display',sans-serif;font-size:16px;font-weight:800;color:var(--gold-lt);line-height:1.3;margin-bottom:9px;}
+.v-body{font-size:11.5px;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:14px;}
+.v-cta{display:inline-block;background:var(--gold);color:var(--navy-d);font-family:'Red Hat Display',sans-serif;font-size:11px;font-weight:800;letter-spacing:.4px;padding:9px 18px;border-radius:5px;cursor:pointer;border:none;transition:background .15s;}
+.v-cta:hover{background:var(--gold-lt);}
+
+/* Methodology */
+.method{font-size:10.5px;color:var(--t3);line-height:1.7;padding:13px 16px;background:var(--white);border:1px solid var(--bdr);border-radius:8px;}
+.method strong{color:var(--t2);}
+
+/* Responsive */
+@media(max-width:880px){.grid{grid-template-columns:1fr;}.inp-panel{position:static;}.two-col{grid-template-columns:1fr;}}
+@media(max-width:500px){.hdr{padding:0 14px;}.hdr-note{display:none;}.wrap{padding:18px 12px 48px;}.bar-lbl{width:96px;}}
+
+/* PDF export button */
+.export-btn{
+  background:var(--gold);color:var(--navy-d);
+  border:none;border-radius:5px;
+  padding:7px 16px;
+  font-family:'Red Hat Display',sans-serif;
+  font-size:11px;font-weight:800;letter-spacing:.3px;
+  cursor:pointer;display:flex;align-items:center;gap:6px;
+  transition:background .15s;flex-shrink:0;
+}
+.export-btn:hover{background:var(--gold-lt);}
+
+/* Print / PDF styles */
+@media print {
+  body{background:#fff;}
+  .hdr{background:#002a54 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .export-btn,.share-btn,.reset-btn{display:none !important;}
+  .inp-panel{position:static !important;box-shadow:none;}
+  .grid{grid-template-columns:340px 1fr !important;}
+  .wrap{padding:16px 20px 32px;}
+  .card,.inp-panel{box-shadow:none;border:1px solid #dde2ea;}
+  input[type=range]{display:none;}
+  .sl-live{display:none;}
+  .f-row input,.fi{border:none;padding:0;}
+  .verdict,.multi-note{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .s-bar,.lup-btn,.ticker-row button{display:none;}
+  @page{margin:15mm 12mm;size:A4;}
+}
+
+/* Progress bar */
+.progress-wrap{padding:10px 20px 0;background:var(--white);}
+.progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.progress-label-text{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);}
+.progress-label-pct{font-size:9px;font-weight:800;color:var(--navy);}
+.progress-track{height:4px;background:#e8eef6;border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(to right,var(--gold),var(--bull-m));border-radius:2px;transition:width .4s ease;}
+
+/* Reset button */
+.reset-btn{background:transparent;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.18);border-radius:5px;padding:5px 11px;font-family:'Red Hat Display',sans-serif;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.reset-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+
+/* Share button */
+.share-btn{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:5px;padding:7px 14px;font-family:'Red Hat Display',sans-serif;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;flex-shrink:0;}
+.share-btn:hover{background:rgba(255,255,255,.2);}
+.share-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;font-family:'Red Hat Display',sans-serif;font-size:12px;font-weight:700;padding:10px 20px;border-radius:6px;box-shadow:0 4px 20px rgba(0,0,0,.25);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:999;white-space:nowrap;}
+.share-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Verdict — enhanced */
+.verdict{background:linear-gradient(135deg,var(--navy-d) 0%,var(--navy-m) 100%);border-radius:10px;padding:28px 28px 24px;box-shadow:0 8px 40px rgba(0,42,84,.22);border:1px solid rgba(189,150,83,.2);position:relative;overflow:hidden;}
+.verdict::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(189,150,83,.12) 0%,transparent 70%);pointer-events:none;}
+.v-eye{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:rgba(189,150,83,.8);margin-bottom:10px;}
+.v-head{font-family:'Red Hat Display',sans-serif;font-size:19px;font-weight:800;color:#fff;margin-bottom:12px;line-height:1.3;}
+.v-body{font-size:12px;color:rgba(255,255,255,.6);line-height:1.75;margin-bottom:20px;}
+.v-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.v-cta{display:inline-flex;align-items:center;gap:7px;background:var(--gold);color:var(--navy-d);font-family:'Red Hat Display',sans-serif;font-size:12px;font-weight:800;letter-spacing:.3px;padding:11px 22px;border-radius:6px;cursor:pointer;border:none;transition:all .15s;}
+.v-cta:hover{background:var(--gold-lt);transform:translateX(2px);}
+.v-cta-secondary{display:inline-flex;align-items:center;gap:7px;background:transparent;color:rgba(255,255,255,.7);font-family:'Red Hat Display',sans-serif;font-size:12px;font-weight:700;padding:11px 18px;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,.2);transition:all .15s;}
+.v-cta-secondary:hover{background:rgba(255,255,255,.08);color:#fff;}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-l">
+    <div class="hex">P</div>
+    <span class="hdr-name">ProspEx</span>
+    <div class="hdr-sep"></div>
+    <span class="hdr-sub">Equity vs Royalty Calculator</span>
+  </div>
+  <span class="hdr-note">Indicative only · not financial advice</span>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <button class="share-btn" onclick="shareURL()">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><circle cx="12" cy="3" r="1.8" stroke="currentColor" stroke-width="1.5"></circle><circle cx="12" cy="13" r="1.8" stroke="currentColor" stroke-width="1.5"></circle><circle cx="4" cy="8" r="1.8" stroke="currentColor" stroke-width="1.5"></circle><path d="M10.3 4.1L5.7 6.9M10.3 11.9L5.7 9.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+      Share
+    </button>
+    <button class="export-btn" onclick="exportPDF()">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><path d="M8 1v9M5 7l3 3 3-3M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      Save as PDF
+    </button>
+  </div>
+</header>
+<div class="share-toast" id="share-toast">Link copied to clipboard ✓</div>
+
+<div class="wrap">
+  <div class="intro">
+    <h1>What is your equity raise really costing you?</h1>
+    <p>Enter your project parameters to compare the true cost of an equity placement against non-dilutive royalty finance — including foregone earnings, cost of capital, payback period, and an indicative royalty valuation.</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- INPUTS -->
+    <div class="inp-panel">
+      <div class="inp-hd">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+          <div class="inp-hd-title">Project Parameters</div>
+          <button class="reset-btn" onclick="resetInputs()">Reset</button>
+        </div>
+        <div class="inp-hd-sub">All inputs update results instantly</div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span class="progress-label-text">Inputs personalised</span>
+          <span class="progress-label-pct" id="prog-pct">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="inp-body">
+
+        <span class="sec-lbl">Share structure</span>
+
+        <!-- Ticker -->
+        <div class="field">
+          <div class="f-lbl">ASX Ticker <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;color:var(--t3);">— auto-fills price &amp; shares</span></div>
+          <div class="ticker-row">
+            <div class="f-row"><span class="pfx" style="font-size:10px;letter-spacing:1px;">ASX</span><input class="fi" id="i-ticker" type="text" placeholder="e.g. MIN, PLS" maxlength="6"></div>
+            <button class="lup-btn" id="lup-btn" onclick="lookupTicker()">Look up</button>
+          </div>
+          <div class="s-bar" id="s-bar"></div>
+        </div>
+
+        <div class="field">
+          <div class="f-lbl">Current Share Price</div>
+          <div class="f-row"><span class="pfx">A$</span><input class="fi" id="i-price" type="number" value="0.45" min="0.001" step="0.001"><span class="sfx">per share</span></div>
+        </div>
+
+        <div class="field">
+          <div class="f-lbl">Shares on Issue</div>
+          <div class="f-row"><input class="fi" id="i-shares" type="number" value="270" min="1" step="1"><span class="sfx">M shares</span></div>
+        </div>
+
+        <!-- Raise price toggle -->
+        <div class="field">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div class="f-lbl" style="margin:0">Raise Price</div>
+            <div class="mode-tog">
+              <button class="mode-btn on" id="btn-disc" onclick="setMode(&#39;discount&#39;)">Discount %</button>
+              <button class="mode-btn" id="btn-dir" onclick="setMode(&#39;direct&#39;)">Set price</button>
+            </div>
+          </div>
+          <div id="md-discount">
+            <div class="sl-live" id="disc-live">15%</div>
+            <input type="range" id="i-discount" min="1" max="40" value="15" step="1" style="background: linear-gradient(to right,var(--gold) 0%,var(--gold) 35.8974358974359%,#e4e9f0 35.8974358974359%);">
+            <div class="sl-labels"><span>1%</span><span>40%</span></div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;">
+              <span class="f-hint">Discount to market price</span>
+              <span class="derived">Issue price: <span id="der-price">A$0.383</span></span>
+            </div>
+          </div>
+          <div id="md-direct" style="display:none">
+            <div class="f-row"><span class="pfx">A$</span><input class="fi" id="i-rprice" type="number" value="0.383" min="0.001" step="0.001"><span class="sfx">issue price</span></div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;">
+              <span class="f-hint">Price you will raise at</span>
+              <span class="derived">Implied discount: <span id="der-disc">15.1%</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="f-lbl">Capital Required</div>
+          <div class="f-row"><span class="pfx">A$</span><input class="fi" id="i-capital" type="number" value="25" min="1" max="500" step="1"><span class="sfx">M</span></div>
+          <div class="f-hint">Total amount to raise · <span style="color:var(--navy);font-weight:600;">ProspEx issues fractionally</span> — your royalty is distributed across a broad investor base under a single agreement, rather than concentrated with a single counterparty with no path to liquidity.</div>
+        </div>
+
+        <div class="divider"></div>
+        <span class="sec-lbl">Revenue &amp; royalty</span>
+
+        <div class="field">
+          <div class="f-lbl">Projected Annual Revenue</div>
+          <div class="f-row"><span class="pfx">A$</span><input class="fi" id="i-revenue" type="number" value="300" min="1" step="1"><span class="sfx">M / yr</span></div>
+          <div class="f-hint">Expected mine revenue once in production</div>
+        </div>
+
+        <div class="field">
+          <div class="f-lbl">Net Profit Margin</div>
+          <div class="sl-live" id="margin-live">20%</div>
+          <input type="range" id="i-margin" min="1" max="60" value="20" step="1" style="background: linear-gradient(to right,var(--gold) 0%,var(--gold) 32.20338983050847%,#e4e9f0 32.20338983050847%);">
+          <div class="sl-labels"><span>1%</span><span>60%</span></div>
+          <div class="f-hint">Used for foregone-earnings calc · typical mining range 15–35%</div>
+        </div>
+
+        <div class="field">
+          <div class="f-lbl">Royalty Rate</div>
+          <div class="sl-live" id="roy-live">2.00%</div>
+          <input type="range" id="i-royalty" min="0.5" max="5" value="2" step="0.25" style="background: linear-gradient(to right,var(--gold) 0%,var(--gold) 33.33333333333333%,#e4e9f0 33.33333333333333%);">
+          <div class="sl-labels"><span>0.5%</span><span>5.0%</span></div>
+          <div class="f-hint">Applied to net revenue after allowable deductions below</div>
+        </div>
+
+        <div class="field">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="f-lbl" style="margin:0;white-space:nowrap;">Allowable Deductions</div>
+            <div class="f-row" style="width:100px;flex-shrink:0;">
+              <input class="fi" id="i-ded" type="number" value="2" min="0" max="100" step="0.5" style="text-align:right;">
+              <span class="sfx">%</span>
+            </div>
+          </div>
+          <div class="f-hint" style="margin-top:4px;">% of revenue deducted before royalty is applied — e.g. transport, treatment &amp; refining charges. 0% = gross revenue royalty.</div>
+        </div>
+
+        <div class="field">
+          <div class="f-lbl">Mine Life</div>
+          <div class="sl-live" id="yr-live">15 years</div>
+          <input type="range" id="i-years" min="5" max="40" value="15" step="1" style="background: linear-gradient(to right,var(--gold) 0%,var(--gold) 28.57142857142857%,#e4e9f0 28.57142857142857%);">
+          <div class="sl-labels"><span>5 yrs</span><span>40 yrs</span></div>
+          <div class="f-hint">Royalty runs for the full life of mine</div>
+        </div>
+
+        <div class="divider"></div>
+        <span class="sec-lbl">Royalty valuation</span>
+
+        <div class="field">
+          <!-- Already in production checkbox -->
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <input type="checkbox" id="i-producing" style="width:16px;height:16px;accent-color:var(--navy);cursor:pointer;flex-shrink:0;">
+            <label for="i-producing" style="font-size:11px;font-weight:700;color:var(--t1);cursor:pointer;line-height:1.3;">Project is already in production</label>
+          </div>
+
+          <!-- Pre-production fields — hidden when producing -->
+          <div id="preprod-fields">
+            <div class="f-lbl" style="margin-bottom:5px;">Project Start Date</div>
+            <div class="f-row" style="margin-bottom:5px;"><input class="fi" id="i-start" type="month" value="2027-06"></div>
+            <div class="f-hint">When production begins — royalty cashflows start here</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="f-lbl">Project Stage</div>
+          <div class="f-row" style="padding:0;">
+            <select class="fi" id="i-stage" style="height:38px;font-size:12px;font-weight:600;cursor:pointer;">
+              <option value="pfs">PFS / DFS</option>
+              <option value="dev" selected="">Development stage</option>
+              <option value="prod">Operational / producing</option>
+            </select>
+          </div>
+          <div class="f-hint">Used to determine typical market NAV multiple range</div>
+        </div>
+
+        <div class="field">
+          <div class="f-lbl">Commodity Type</div>
+          <div class="f-row" style="padding:0;">
+            <select class="fi" id="i-commodity" style="height:38px;font-size:12px;font-weight:600;cursor:pointer;">
+              <option value="nonprecious" selected="">Non-precious (base metals, battery metals, bulk)</option>
+              <option value="precious">Precious (gold, silver, PGMs)</option>
+            </select>
+          </div>
+          <div class="f-hint">Precious metals royalties typically attract higher NAV multiples</div>
+        </div>
+
+        <div class="field">
+          <div class="f-lbl">Buyer Discount Rate</div>
+          <div class="sl-live" id="dr-live">8.0%</div>
+          <input type="range" id="i-dr" min="4" max="20" value="8" step="0.5" style="background: linear-gradient(to right,var(--gold) 0%,var(--gold) 25%,#e4e9f0 25%);">
+          <div class="sl-labels"><span>4%</span><span>20%</span></div>
+          <div class="f-hint">Rate a royalty buyer applies to future cashflows</div>
+        </div>
+
+        <div class="field">
+          <div class="f-lbl">Assumed Share Price Growth</div>
+          <div class="sl-live" id="spg-live">8.0% p.a.</div>
+          <input type="range" id="i-spg" min="0" max="30" value="8" step="0.5" style="background: linear-gradient(to right,var(--gold) 0%,var(--gold) 26.666666666666668%,#e4e9f0 26.666666666666668%);">
+          <div class="sl-labels"><span>0%</span><span>30%</span></div>
+          <div class="f-hint">Annual share price appreciation assumed for equity IRR calc · reflects the return new shareholders expect</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results">
+
+      <!-- Results banner — mirrors the inputs panel header -->
+      <div style="background:var(--gold);border-radius:10px;padding:16px 20px;box-shadow:var(--sh-m);">
+        <div style="font-family:&#39;Red Hat Display&#39;,sans-serif;font-size:13px;font-weight:800;color:var(--navy-d);margin-bottom:2px;">Analysis Results</div>
+        <div style="font-size:10.5px;color:rgba(0,24,48,.55);">Updates instantly as you adjust parameters</div>
+      </div>
+
+      <!-- Two summary cards -->
+      <div class="two-col">
+
+        <!-- Equity card -->
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-dot" style="background:var(--bear-m)"></div>
+            <div class="card-title">Equity Raise</div>
+            
+          </div>
+          <div class="metrics">
+            <div class="met">
+              <div class="met-lbl">New shares to issue</div>
+              <span class="met-val bad" id="r-newsh">65.4M shares</span>
+            </div>
+            <div class="met">
+              <div class="met-lbl">Dilution to existing holders</div>
+              <span class="met-val bad" id="r-dil">19.5%</span>
+            </div>
+            <div class="met">
+              <div class="met-lbl">Issue price</div>
+              <span class="met-val navy" id="r-ip">A$0.383 (15.0% disc.)</span>
+            </div>
+            <div class="met met-hl">
+              <div>
+                <div class="met-lbl">Total foregone earnings (mine life)</div>
+                <div class="met-sub">EPS × new shares × mine life · at <span id="r-mgn">20%</span> net margin</div>
+              </div>
+              <span class="met-val bad" id="r-eps">A$217.9M</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Royalty card -->
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-dot" style="background:var(--bull-m)"></div>
+            <div class="card-title">Royalty Finance</div>
+            
+          </div>
+          <div class="metrics">
+            <div class="met">
+              <div class="met-lbl">Shares issued</div>
+              <span class="met-val good">Zero</span>
+            </div>
+            <div class="met">
+              <div class="met-lbl">Dilution to existing holders</div>
+              <span class="met-val good">0%</span>
+            </div>
+            <div class="met">
+              <div class="met-lbl">Annual royalty payment</div>
+              <span class="met-val gold" id="r-roya">A$5.9M</span>
+            </div>
+            <div class="met met-hlg">
+              <div>
+                <div class="met-lbl">Total royalty payments (mine life)</div>
+                <div class="met-sub">At projected revenue less allowable deductions</div>
+              </div>
+              <span class="met-val gold" id="r-royt">A$88.2M</span>
+            </div>
+            <div class="met met-hlg">
+              <div class="met-lbl">Revenue retained after royalty</div>
+              <span class="met-val good" id="r-ret">98.0% of gross revenue retained</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- NAV card -->
+      <div class="card" style="border-top:3px solid var(--gold);">
+        <div class="card-hd">
+          <div class="card-dot" style="background:var(--gold)"></div>
+          <div class="card-title">Royalty Valuation</div>
+          <span class="bdg gold">Buyer's perspective</span>
+        </div>
+        <div class="metrics" style="display:grid;grid-template-columns:1fr 1fr;">
+          <div class="met">
+            <div><div class="met-lbl">Royalty price (= capital raised)</div><div class="met-sub">What the miner receives</div></div>
+            <span class="met-val navy" id="r-royprice">A$25.0M</span>
+          </div>
+          <div class="met">
+            <div><div class="met-lbl">NPV of cashflows at buyer's rate</div><div class="met-sub">What the royalty is worth at <span id="r-dr-inline">8.0%</span> discount rate</div></div>
+            <span class="met-val gold" id="r-nav">A$48.0M</span>
+          </div>
+          <div class="met">
+            <div><div class="met-lbl">Price-to-NAV multiple</div><div class="met-sub">Buyer pays price ÷ NPV — below 1× = buyer discount, above 1× = premium</div></div>
+            <span class="met-val" id="r-navr" style="color: var(--gold);">0.52× price-to-NAV</span>
+          </div>
+          <div class="met">
+            <div><div class="met-lbl">Lead time to production</div><div class="met-sub">Pre-production discount applies</div></div>
+            <span class="met-val navy" id="r-lead">1.1 years</span>
+          </div>
+        </div>
+        <!-- Market benchmark range -->
+        <div style="padding:12px 18px;background:#faf8f3;border-top:1px solid var(--bdr);">
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--t3);margin-bottom:8px;">Market benchmark — typical price-to-NAV range</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="flex:1;position:relative;height:28px;background:#e8eef6;border-radius:5px;overflow:hidden;">
+              <div id="bench-range-fill" style="position: absolute; top: 0px; bottom: 0px; background: rgba(189, 150, 83, 0.25); border: 1px solid rgba(189, 150, 83, 0.5); border-radius: 4px; transition: left 0.4s, width 0.4s; left: 25%; width: 15%;"></div>
+              <div id="bench-marker" style="position: absolute; top: 3px; bottom: 3px; width: 3px; background: var(--bull-m); border-radius: 2px; transition: left 0.4s; left: 26.1%;" title="Your implied multiple"></div>
+              <!-- Scale labels -->
+              <div style="position:absolute;inset:0;display:flex;justify-content:space-between;padding:0 6px;align-items:center;pointer-events:none;">
+                <span style="font-size:9px;color:var(--t3);">0×</span>
+                <span style="font-size:9px;color:var(--t3);">0.5×</span>
+                <span style="font-size:9px;color:var(--t3);">1.0×</span>
+                <span style="font-size:9px;color:var(--t3);">1.5×</span>
+                <span style="font-size:9px;color:var(--t3);">2.0×</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:7px;">
+            <span style="font-size:10.5px;color:var(--t2);" id="bench-label">Non-precious · Development stage · typical range: 0.5× – 0.8×</span>
+            <div style="display:flex;align-items:center;gap:6px;font-size:9.5px;color:var(--t3);">
+              <span style="display:inline-block;width:14px;height:8px;background:rgba(189,150,83,.35);border:1px solid rgba(189,150,83,.5);border-radius:2px;"></span>Market range
+              <span style="display:inline-block;width:4px;height:12px;background:var(--bear-m);border-radius:1px;margin-left:4px;"></span>Your multiple
+            </div>
+          </div>
+        </div>
+        <div class="nav-note" id="nav-note">At 0.52×, your implied price-to-NAV multiple sits within the typical market range of 0.5×–0.8× for a non-precious development stage project. This is a commercially realistic transaction — the royalty price is consistent with what informed buyers would expect to pay at this stage. With 1.1 years to production, the pre-production discount is the dominant pricing factor — buyers reduce their offer the further a project is from first cashflow, reflecting time value of money and development risk. As the project advances toward production, expect the buyer discount rate to compress and the achievable multiple to improve.</div>
+      </div>
+
+      <!-- Ownership -->
+      <div class="card" style="overflow:hidden;">
+        <div class="card-hd">
+          <div class="card-dot" style="background:var(--navy)"></div>
+          <div class="card-title">Share Register — Before vs After</div>
+        </div>
+
+        <!-- Two column comparison -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--bdr);">
+
+          <!-- Equity column -->
+          <div style="padding:18px 20px;border-right:1px solid var(--bdr);">
+            <div style="font-size:9px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--bear-d);margin-bottom:12px;">After Equity Raise</div>
+
+            <!-- Stacked bar -->
+            <div style="height:52px;border-radius:7px;overflow:hidden;display:flex;margin-bottom:10px;box-shadow:inset 0 1px 3px rgba(0,0,0,.08);">
+              <div class="own-seg" id="own-ex" style="background: var(--navy); width: 80.5%; justify-content: flex-start; padding-left: 12px; font-size: 12px;">
+                <span id="own-ex-label">81%</span>
+              </div>
+              <div class="own-seg" id="own-nw" style="background: var(--bear-m); width: 19.5%; font-size: 12px;">
+                <span id="own-nw-label">19%</span>
+              </div>
+            </div>
+
+            <!-- Legend -->
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--t2);">
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--navy);flex-shrink:0;"></div>
+                <span>Existing shareholders</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--t2);">
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--bear-m);flex-shrink:0;"></div>
+                <span>New placement holders</span>
+                <span style="font-size:9.5px;color:var(--bear-d);font-weight:700;">ongoing dilution</span>
+              </div>
+            </div>
+
+            <!-- Impact note -->
+            <div style="margin-top:12px;padding:9px 11px;background:var(--bear-lt);border-radius:5px;border:1px solid rgba(181,43,43,.12);">
+              <div style="font-size:10px;font-weight:700;color:var(--bear-d);margin-bottom:2px;">Ongoing dilution to existing holders</div>
+              <div style="font-size:10px;color:#8b2020;line-height:1.45;">New shareholders participate in earnings from this project and all other assets in the company for the duration of the mine life.</div>
+            </div>
+          </div>
+
+          <!-- Royalty column -->
+          <div style="padding:18px 20px;">
+            <div style="font-size:9px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--bull-d);margin-bottom:12px;">After Royalty Finance</div>
+
+            <!-- Full bar -->
+            <div style="height:52px;border-radius:7px;overflow:hidden;display:flex;margin-bottom:10px;box-shadow:inset 0 1px 3px rgba(0,0,0,.08);">
+              <div class="own-seg" style="background:var(--bull-m);width:100%;font-size:12px;letter-spacing:.3px;">100% existing holders</div>
+            </div>
+
+            <!-- Legend -->
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--t2);">
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--bull-m);flex-shrink:0;"></div>
+                <span>Existing shareholders</span>
+                <span style="font-size:9.5px;color:var(--bull-d);font-weight:700;">intact</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--t2);">
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--gold);flex-shrink:0;"></div>
+                <span>Royalty holders — asset-level only</span>
+              </div>
+            </div>
+
+            <!-- Impact note -->
+            <div style="margin-top:12px;padding:9px 11px;background:var(--bull-lt);border-radius:5px;border:1px solid rgba(30,122,74,.15);">
+              <div style="font-size:10px;font-weight:700;color:var(--bull-d);margin-bottom:2px;">No equity dilution</div>
+              <div style="font-size:10px;color:#1a5c35;line-height:1.45;">Royalty attaches only to this project's revenue — all other assets remain unencumbered.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ProspEx advantages strip -->
+        <div style="padding:16px 20px;background:#fafbfc;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);margin-bottom:2px;">ProspEx advantages</div>
+
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--gold-pale);border:1px solid rgba(189,150,83,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;">✦</div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:2px;">Shareholder participation</div>
+              <div style="font-size:10.5px;color:var(--t2);line-height:1.5;">Eligible existing shareholders can invest in the royalty raise directly — accessing the cashflow stream alongside new wholesale investors.</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:var(--bdr);"></div>
+
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:50%;background:#eef4ff;border:1px solid rgba(30,64,175,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;">↩</div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:2px;">Gradual buyback — on your terms</div>
+              <div style="font-size:10.5px;color:var(--t2);line-height:1.5;">Because royalties are issued fractionally across many holders, the miner can make offers to buy back units incrementally through the ProspEx secondary market — without needing to repurchase the whole royalty at once, which is what makes traditional buybacks prohibitive on cash flow.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cost of Capital Comparison -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-dot" style="background:var(--navy)"></div>
+          <div class="card-title">Cost of Capital Comparison</div>
+          <span class="bdg" style="background:#eef4ff;color:#1e40af;border:1px solid rgba(30,64,175,.15);">Miner's perspective</span>
+        </div>
+
+        <!-- Column headers -->
+        <div style="display:grid;grid-template-columns:180px 1fr 1fr;background:#f5f7fa;border-bottom:1px solid var(--bdr);padding:9px 18px;gap:0;align-items:center;">
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);">Metric</div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--bear-d);text-align:center;">Equity Raise</div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--bull-d);text-align:center;">Royalty Finance</div>
+        </div>
+
+        <!-- Row 1: Cost of capital (IRR) -->
+        <div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid var(--bdr);align-items:stretch;">
+          <div style="padding:14px 18px;border-right:1px solid var(--bdr);background:#fafbfc;">
+            <div style="font-size:11.5px;font-weight:700;color:var(--t1);margin-bottom:3px;">Cost of capital</div>
+            <div style="font-size:9.5px;color:var(--t3);line-height:1.4;">Annualised cost to the miner — what the capital provider earns. Lower is cheaper.</div>
+          </div>
+          <div style="padding:14px 18px;border-right:1px solid var(--bdr);text-align:center;">
+            <div style="font-family: &quot;Red Hat Display&quot;, sans-serif; font-size: 26px; font-weight: 800; line-height: 1; color: var(--bear-d);" id="brd-eq-irr">58.2%</div>
+            <div style="font-size:9.5px;color:var(--t3);margin-top:4px;">p.a. to equity investor</div>
+            <div style="font-size:9px;color:var(--t3);margin-top:2px;">at <span id="brd-spg-note">8.0%</span> share price growth</div>
+          </div>
+          <div style="padding:14px 18px;text-align:center;">
+            <div style="font-family: &quot;Red Hat Display&quot;, sans-serif; font-size: 26px; font-weight: 800; line-height: 1; color: var(--bull-d);" id="brd-roy-irr">15.6%</div>
+            <div style="font-size:9.5px;color:var(--t3);margin-top:4px;">p.a. to royalty buyer</div>
+            <div style="font-size:9px;color:var(--t3);margin-top:2px;">paying A$<span id="brd-cap-note">25</span>M royalty price</div>
+          </div>
+        </div>
+
+        <!-- Row 2: Payback -->
+        <div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid var(--bdr);align-items:stretch;">
+          <div style="padding:14px 18px;border-right:1px solid var(--bdr);background:#fafbfc;">
+            <div style="font-size:11.5px;font-weight:700;color:var(--t1);margin-bottom:3px;">Payback period</div>
+            <div style="font-size:9.5px;color:var(--t3);line-height:1.4;">Years until the miner has paid out more than it raised. Longer is better.</div>
+          </div>
+          <div style="padding:14px 18px;border-right:1px solid var(--bdr);text-align:center;">
+            <div style="font-family: &quot;Red Hat Display&quot;, sans-serif; font-size: 26px; font-weight: 800; line-height: 1; color: var(--bear-d);" id="brd-eq-pb">1.7 yrs</div>
+            <div style="font-size:9.5px;color:var(--t3);margin-top:4px;">yrs to repay via earnings</div>
+          </div>
+          <div style="padding:14px 18px;text-align:center;">
+            <div style="font-family: &quot;Red Hat Display&quot;, sans-serif; font-size: 26px; font-weight: 800; line-height: 1; color: var(--bull-d);" id="brd-roy-pb">4.3 yrs</div>
+            <div style="font-size:9.5px;color:var(--t3);margin-top:4px;">yrs to repay via royalty</div>
+          </div>
+        </div>
+
+        <!-- Row 3: Total payout multiple -->
+        <div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid var(--bdr);align-items:stretch;">
+          <div style="padding:14px 18px;border-right:1px solid var(--bdr);background:#fafbfc;">
+            <div style="font-size:11.5px;font-weight:700;color:var(--t1);margin-bottom:3px;">Total payout multiple</div>
+            <div style="font-size:9.5px;color:var(--t3);line-height:1.4;">For every A$1 raised, how much flows out over the mine life. Lower is better.</div>
+          </div>
+          <div style="padding:14px 18px;border-right:1px solid var(--bdr);text-align:center;">
+            <div style="font-family: &quot;Red Hat Display&quot;, sans-serif; font-size: 26px; font-weight: 800; line-height: 1; color: var(--bear-d);" id="brd-eq-mult">8.71×</div>
+            <div style="font-size:9.5px;color:var(--t3);margin-top:4px;">× in foregone earnings</div>
+          </div>
+          <div style="padding:14px 18px;text-align:center;">
+            <div style="font-family: &quot;Red Hat Display&quot;, sans-serif; font-size: 26px; font-weight: 800; line-height: 1; color: var(--bull-d);" id="brd-roy-mult">3.53×</div>
+            <div style="font-size:9.5px;color:var(--t3);margin-top:4px;">× in total royalty payments</div>
+          </div>
+        </div>
+
+        <!-- Row 4: Earnings impact — like-for-like -->
+        <div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid var(--bdr);align-items:stretch;">
+          <div style="padding:14px 18px;border-right:1px solid var(--bdr);background:#fafbfc;">
+            <div style="font-size:11.5px;font-weight:700;color:var(--t1);margin-bottom:3px;">Cumulative earnings impact</div>
+            <div style="font-size:9.5px;color:var(--t3);line-height:1.4;">Total reduction in net profit over the mine life. Like-for-like on an earnings basis. Lower is better.</div>
+          </div>
+          <div style="padding:14px 18px;border-right:1px solid var(--bdr);text-align:center;">
+            <div style="font-family: &quot;Red Hat Display&quot;, sans-serif; font-size: 22px; font-weight: 800; line-height: 1; color: var(--bear-d);" id="brd-eq-earn">A$217.9M</div>
+            <div style="font-size:9.5px;color:var(--t3);margin-top:4px;">foregone net profit</div>
+            <div style="font-size:9px;color:var(--t3);margin-top:2px;">EPS reduction × new shares × mine life</div>
+          </div>
+          <div style="padding:14px 18px;text-align:center;">
+            <div style="font-family: &quot;Red Hat Display&quot;, sans-serif; font-size: 22px; font-weight: 800; line-height: 1; color: var(--bull-d);" id="brd-roy-earn">A$17.6M</div>
+            <div style="font-size:9.5px;color:var(--t3);margin-top:4px;">royalty earnings drag</div>
+            <div style="font-size:9px;color:var(--t3);margin-top:2px;">royalty payments × net margin × mine life</div>
+          </div>
+        </div>
+
+        <!-- Summary bar -->
+        <div style="padding:13px 18px;background:var(--navy);display:flex;align-items:center;gap:12px;">
+          <span style="font-size:16px;flex-shrink:0;">⚖</span>
+          <span style="font-family:&#39;Red Hat Display&#39;,sans-serif;font-size:12px;font-weight:700;color:#fff;line-height:1.5;" id="brd-summary">Royalty is the lower cost of capital on all four measures — lower annualised rate, slower payback drain, lower total payout, and less cumulative earnings drag over the mine life.</span>
+        </div>
+
+        <!-- Key -->
+        <div style="padding:10px 18px;background:#f8f9fb;font-size:10px;color:var(--t3);line-height:1.6;">
+          <strong style="color:var(--t2);">Green</strong> = lower cost to the miner on that metric.
+          <strong style="color:var(--t2);">Cost of capital</strong> = annualised rate the miner pays for money — equity IRR assumes share price grows at the stated rate p.a. plus earnings dividends; royalty IRR is back-calculated from the buyer paying the royalty price.
+          <strong style="color:var(--t2);">Payback:</strong> longer = more favourable for the miner (slower cash drain).
+          <strong style="color:var(--t2);">Payout multiple:</strong> lower = less total cash given back per dollar raised.
+          <strong style="color:var(--t2);">Earnings impact:</strong> cumulative reduction in net profit — equity drag = foregone EPS on new shares; royalty drag = royalty payments × net margin. Like-for-like on an earnings basis.
+        </div>
+      </div>
+
+      <!-- Verdict -->
+      <div class="verdict">
+        <div class="v-eye">ProspEx Analysis</div>
+        <div class="v-head" id="v-head">Royalty finance is the lower cost of capital on a like-for-like basis</div>
+        <div class="v-body" id="v-body">A 2.00% royalty on A$300M revenue costs A$5.9M per year. The royalty buyer, paying A$25M, earns an implied IRR of 15.6% — versus 58.2% for an equity investor assuming 8.0% p.a. share price growth. Total royalty payments of A$88.2M represent a 3.53× payout multiple, versus 8.71× for equity. No dilution, no placement discount, and no permanent transfer of equity ownership.</div>
+        <div style="margin-bottom:18px;padding:12px 16px;background:rgba(255,255,255,.07);border-radius:7px;border:1px solid rgba(189,150,83,.2);">
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:rgba(189,150,83,.7);margin-bottom:7px;">Why work with ProspEx</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.7;">
+            ProspEx runs a <strong style="color:rgba(255,255,255,.85);">full competitive capital raise process</strong> — approaching listed royalty companies, institutional investors, family offices, and wholesale investors simultaneously so you receive the best available terms.<br><br>
+            Your royalty is issued <strong style="color:rgba(255,255,255,.85);">fractionally across a broad and diversified investor base</strong> under a single agreement. Where eligible, existing shareholders can be offered the opportunity to participate as royalty holders — giving your register a direct interest in the royalty cashflow stream. Larger institutional investors can participate as <strong style="color:rgba(255,255,255,.85);">cornerstone participants</strong> alongside the broader wholesale market.<br><br>
+            ProspEx's platform is designed to support a <strong style="color:rgba(255,255,255,.85);">secondary market for royalty interests</strong> — creating a mechanism for the miner to make offers to repurchase units incrementally over time, without the cash flow burden of buying back the royalty in its entirety — a flexibility that is not available under a conventional bilateral royalty arrangement.
+          </div>
+        </div>
+        <div class="v-actions">
+          <button class="v-cta" onclick="window.location.href=&#39;mailto:kassia@prospexgroup.com.au?subject=Royalty Finance Enquiry&#39;">
+            Talk to ProspEx about your project
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </button>
+          <button class="v-cta-secondary" onclick="shareURL()">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="12" cy="3" r="1.8" stroke="currentColor" stroke-width="1.5"></circle><circle cx="12" cy="13" r="1.8" stroke="currentColor" stroke-width="1.5"></circle><circle cx="4" cy="8" r="1.8" stroke="currentColor" stroke-width="1.5"></circle><path d="M10.3 4.1L5.7 6.9M10.3 11.9L5.7 9.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+            Share these results
+          </button>
+          <button class="v-cta-secondary" onclick="exportPDF()">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            Save as PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="method">
+        <strong>Methodology:</strong><br>
+        <strong>Equity IRR:</strong> the annualised return to placement investors, assuming annual dividends from net earnings plus share price appreciation at the stated growth rate. Calculated via Newton-Raphson IRR solver.<br>
+        <strong>Royalty IRR:</strong> back-calculated from the buyer paying the royalty price (= capital raised), receiving annual royalty payments from project start date.<br>
+        <strong>Payback period:</strong> years until cumulative distributions to the capital provider (earnings to shareholders / royalty payments) equal the capital raised.<br>
+        <strong>Payout multiple:</strong> total distributions over mine life ÷ capital raised. Foregone earnings = revenue × net margin ÷ shares × new shares × mine life.<br>
+        <strong>Royalty NAV:</strong> DCF of royalty cashflows discounted at buyer's rate from project start, mid-year convention.<br>
+        All figures pre-tax, flat revenue assumed. Indicative only — not financial advice.
+      </div>
+
+      <!-- Multi-project callout -->
+      <div class="multi-note" style="background:var(--navy);border-radius:10px;padding:20px 22px;">
+        <div style="font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(189,150,83,.7);margin-bottom:8px;">Context — Multi-Project Companies &amp; Royalty Holders</div>
+        <div style="font-family:&#39;Red Hat Display&#39;,sans-serif;font-size:14px;font-weight:800;color:var(--gold-lt);margin-bottom:10px;line-height:1.3;">This analysis understates the cost of equity for companies with multiple projects</div>
+        <div style="font-size:11.5px;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:14px;">
+          When you issue equity to fund one project, new shareholders receive a proportional claim on <em style="color:rgba(255,255,255,.85);">every</em> project in the company — current and future. The foregone earnings above only captures dilution against this project's revenue. The true cost is higher once you include earnings from your other projects that new shareholders will also participate in. A royalty is tied exclusively to this project's gross revenue — your other assets, exploration licences, and future discoveries remain entirely unencumbered.
+        </div>
+        <div style="height:1px;background:rgba(189,150,83,.2);margin-bottom:14px;"></div>
+        <div style="font-family:&#39;Red Hat Display&#39;,sans-serif;font-size:12px;font-weight:700;color:var(--gold-lt);margin-bottom:8px;">For royalty holders — why asset-level exposure is a structural advantage</div>
+        <div style="font-size:11.5px;color:rgba(255,255,255,.6);line-height:1.7;">
+          A royalty holder's position is asset-specific by design. By attaching to a single asset's revenue rather than the equity of a company, the royalty holder achieves <em style="color:rgba(255,255,255,.85);">cashflow seniority</em> over equity holders, <em style="color:rgba(255,255,255,.85);">dilution immunity</em> (the royalty rate cannot be reduced by future equity raises or capital structure changes), and <em style="color:rgba(255,255,255,.85);">structural longevity</em> — the royalty survives changes in ownership, corporate restructures, and project restarts that would impair equity value. Where an equity investor's return is tied to corporate execution and strategy, the royalty holder's return is tied to the underlying resource.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// Price mode
+let mode = 'discount';
+function setMode(m){
+  mode=m;
+  if(m==='discount'){
+    $('md-discount').style.display='block'; $('md-direct').style.display='none';
+    $('btn-disc').classList.add('on'); $('btn-dir').classList.remove('on');
+  } else {
+    $('md-discount').style.display='none'; $('md-direct').style.display='block';
+    $('btn-dir').classList.add('on'); $('btn-disc').classList.remove('on');
+    const p=+$('i-price').value||0.45, d=+$('i-discount').value||15;
+    $('i-rprice').value=(p*(1-d/100)).toFixed(3);
+  }
+  calc();
+}
+
+function issueP(){
+  const p=+$('i-price').value||0.45;
+  if(mode==='discount') return p*(1-(+$('i-discount').value||15)/100);
+  return Math.min(+$('i-rprice').value||p*0.85, p);
+}
+
+// Sliders
+function initSl(id,lvId,fmt){
+  const sl=$(id), lv=$(lvId);
+  function u(){
+    const mn=+sl.min,mx=+sl.max,v=+sl.value,p=((v-mn)/(mx-mn))*100;
+    sl.style.background=`linear-gradient(to right,var(--gold) 0%,var(--gold) ${p}%,#e4e9f0 ${p}%)`;
+    lv.textContent=fmt(v);
+  }
+  sl.addEventListener('input',()=>{u();calc();}); u();
+}
+initSl('i-discount','disc-live',v=>v+'%');
+initSl('i-royalty', 'roy-live', v=>parseFloat(v).toFixed(2)+'%');
+initSl('i-years',   'yr-live',  v=>v+' years');
+initSl('i-dr',      'dr-live',  v=>parseFloat(v).toFixed(1)+'%');
+initSl('i-margin',  'margin-live',v=>v+'%');
+initSl('i-spg',     'spg-live', v=>parseFloat(v).toFixed(1)+'% p.a.');
+
+['i-capital','i-price','i-shares','i-revenue','i-rprice','i-start','i-ded','i-stage','i-commodity'].forEach(id=>{
+  const el=$(id); if(el) el.addEventListener('input',calc);
+});
+
+// Producing checkbox — toggle pre-production date field and sync stage
+$('i-producing').addEventListener('change', function(){
+  const producing = this.checked;
+  $('preprod-fields').style.display = producing ? 'none' : 'block';
+  if(producing) $('i-stage').value = 'prod';
+  else if($('i-stage').value === 'prod') $('i-stage').value = 'dev';
+  calc();
+});
+$('i-stage').addEventListener('change', function(){
+  if(this.value === 'prod') {
+    $('i-producing').checked = true;
+    $('preprod-fields').style.display = 'none';
+  } else {
+    $('i-producing').checked = false;
+    $('preprod-fields').style.display = 'block';
+  }
+  calc();
+});
+$('i-ticker').addEventListener('keydown',e=>{ if(e.key==='Enter') lookupTicker(); });
+
+const fM  = (v,dp=1)=>'A$'+v.toFixed(dp)+'M';
+const fP  = (v,dp=1)=>v.toFixed(dp)+'%';
+const fSh = v=>v.toFixed(1)+'M shares';
+const fPB = v => isFinite(v) ? v.toFixed(1)+' yrs' : '> mine life';
+
+// Colour the cheaper option green, more expensive red
+function colourPair(eqEl, royEl, eqVal, royVal, lowerIsBetter){
+  const eqWin  = lowerIsBetter ? eqVal  < royVal : eqVal  > royVal;
+  const royWin = lowerIsBetter ? royVal < eqVal  : royVal > eqVal;
+  eqEl.style.color  = eqWin  ? 'var(--bull-d)' : royWin ? 'var(--bear-d)' : 'var(--t2)';
+  royEl.style.color = royWin ? 'var(--bull-d)' : eqWin  ? 'var(--bear-d)' : 'var(--t2)';
+}
+
+// IRR solver: Newton-Raphson with fallback bisection
+function solveIRR(cashflows, guess=0.1){
+  // Guard: need at least one sign change
+  let hasPos=false, hasNeg=false;
+  for(const c of cashflows){ if(c>0) hasPos=true; if(c<0) hasNeg=true; }
+  if(!hasPos || !hasNeg) return NaN;
+
+  let r = guess;
+  for(let i=0; i<200; i++){
+    let npv=0, dnpv=0;
+    for(let t=0; t<cashflows.length; t++){
+      const denom = Math.pow(1+r, t);
+      if(!isFinite(denom) || denom===0) return NaN;
+      npv  += cashflows[t] / denom;
+      dnpv -= t * cashflows[t] / ((1+r) * denom);
+    }
+    if(!isFinite(npv) || !isFinite(dnpv) || dnpv===0) return NaN;
+    const rNew = r - npv/dnpv;
+    if(!isFinite(rNew)) return NaN;
+    if(Math.abs(rNew-r) < 1e-8) return rNew;
+    r = rNew;
+    if(r < -0.999) r = -0.999; // clamp to avoid 1+r <= 0
+  }
+  return NaN; // didn't converge
+}
+
+// ── Default values (used for reset and progress tracking)
+const DEFAULTS = {
+  'i-price':'0.45','i-shares':'270','i-capital':'25','i-discount':'15',
+  'i-rprice':'0.383','i-revenue':'300','i-margin':'20','i-royalty':'2',
+  'i-years':'15','i-dr':'8','i-spg':'8','i-ded':'2','i-start':'2027-06',
+  'i-stage':'dev','i-commodity':'nonprecious'
+};
+
+// ── Reset all inputs to defaults
+function resetInputs(){
+  Object.entries(DEFAULTS).forEach(([id,val])=>{
+    const el=$(id); if(!el) return;
+    el.value=val;
+    // Re-trigger slider gradients
+    el.dispatchEvent(new Event('input'));
+  });
+  $('i-producing').checked=false;
+  $('preprod-fields').style.display='block';
+  $('i-stage').value='dev';
+  $('i-ticker').value='';
+  $('s-bar').style.display='none';
+  setMode('discount');
+  calc();
+}
+
+// ── Progress indicator — counts how many key fields differ from defaults
+function updateProgress(){
+  const keys=['i-price','i-shares','i-capital','i-revenue','i-margin','i-royalty','i-years','i-dr','i-start'];
+  const changed = keys.filter(id=>{
+    const el=$(id); if(!el) return false;
+    return el.value !== DEFAULTS[id];
+  }).length;
+  const ticker = ($('i-ticker').value||'').trim();
+  const total  = keys.length + (ticker ? 1 : 0);
+  const score  = changed + (ticker ? 1 : 0);
+  const pct    = Math.round((score / keys.length) * 100);
+  $('prog-fill').style.width = Math.min(100,pct)+'%';
+  $('prog-pct').textContent  = Math.min(100,pct)+'%';
+}
+
+// ── Share URL — encode current inputs as URL params
+function shareURL(){
+  const params = new URLSearchParams();
+  const keys=['i-price','i-shares','i-capital','i-discount','i-revenue','i-margin',
+               'i-royalty','i-years','i-dr','i-spg','i-ded','i-start','i-stage','i-commodity'];
+  keys.forEach(id=>{ const el=$(id); if(el) params.set(id.replace('i-',''),el.value); });
+  params.set('mode', mode);
+  if($('i-producing').checked) params.set('producing','1');
+  const url = window.location.origin + window.location.pathname + '?' + params.toString();
+  navigator.clipboard.writeText(url).then(()=>{
+    const toast=$('share-toast');
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'),2500);
+  }).catch(()=>{
+    // Fallback for non-https
+    prompt('Copy this link:', url);
+  });
+}
+
+// ── Load state from URL params on page load
+function loadFromURL(){
+  const params = new URLSearchParams(window.location.search);
+  if(![...params].length) return;
+  const map={price:'i-price',shares:'i-shares',capital:'i-capital',discount:'i-discount',
+             rprice:'i-rprice',revenue:'i-revenue',margin:'i-margin',royalty:'i-royalty',
+             years:'i-years',dr:'i-dr',spg:'i-spg',ded:'i-ded',start:'i-start',
+             stage:'i-stage',commodity:'i-commodity'};
+  Object.entries(map).forEach(([param,id])=>{
+    const val=params.get(param); const el=$(id);
+    if(val&&el){ el.value=val; el.dispatchEvent(new Event('input')); }
+  });
+  if(params.get('mode')==='direct') setMode('direct');
+  if(params.get('producing')==='1'){
+    $('i-producing').checked=true;
+    $('preprod-fields').style.display='none';
+    $('i-stage').value='prod';
+  }
+}
+
+// PDF export
+function exportPDF(){
+  // Add a print timestamp line temporarily
+  const stamp = document.createElement('div');
+  stamp.id = 'print-stamp';
+  stamp.style.cssText = 'font-size:10px;color:#7a8fa8;text-align:right;padding:8px 24px 0;font-style:italic;';
+  const ticker = ($('i-ticker').value||'').trim().toUpperCase();
+  const dateStr = new Date().toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
+  const tickerSuffix = ticker ? ' — ' + ticker : '';
+  stamp.textContent = `ProspEx Equity vs Royalty Analysis${tickerSuffix} · Generated ${dateStr} · Indicative only, not financial advice`;
+  document.querySelector('.wrap').prepend(stamp);
+
+  window.print();
+
+  // Remove after print dialog closes
+  setTimeout(()=>{ const s=document.getElementById('print-stamp'); if(s) s.remove(); }, 1000);
+}
+
+function calc(){
+  try { _calc(); updateProgress(); } catch(e) { console.error('Calc error:', e); }
+}
+
+function _calc(){
+  const price  = +$('i-price').value   || 0.45;
+  const shares = +$('i-shares').value  || 270;
+  const cap    = +$('i-capital').value || 25;
+  const rev    = +$('i-revenue').value || 300;
+  const mgn    = +$('i-margin').value  || 20;
+  const roy    = +$('i-royalty').value || 2.0;
+  const ded    = +$('i-ded').value     || 2.0;   // allowable deductions as % of revenue
+  const yrs    = +$('i-years').value   || 15;
+  const dr       = +$('i-dr').value        || 8.0;
+  const spg      = +$('i-spg').value       || 8.0;
+  const stage     = $('i-stage').value     || 'dev';
+  const commodity = $('i-commodity').value || 'nonprecious';
+  const producing = $('i-producing').checked;
+
+  // Lead time — zero if already in production
+  let lead = 0;
+  if(!producing){
+    const sv=$('i-start').value;
+    if(sv){ const sd=new Date(sv+'-01'); lead=Math.max(0,(sd-new Date())/(365.25*24*3600*1000)); }
+    else lead = 1.5;
+  }
+
+  // Benchmark NAV multiple ranges from market data (price-to-NAV)
+  // Source: typical royalty market ranges by stage and commodity
+  const benchmarks = {
+    nonprecious: { pfs:[0.2,0.5], dev:[0.5,0.8], prod:[1.0,1.2] },
+    precious:    { pfs:[0.4,0.5], dev:[0.6,1.0], prod:[1.4,1.6] }
+  };
+  const bench = benchmarks[commodity][stage];
+
+  const ip     = issueP();
+  const discPct= price>0?(1-ip/price)*100:0;
+
+  // Derived labels
+  if(mode==='discount') $('der-price').textContent='A$'+ip.toFixed(3);
+  else $('der-disc').textContent=discPct.toFixed(1)+'%';
+
+  // ── Equity fundamentals
+  const newSh     = cap/ip;
+  const totSh     = shares+newSh;
+  const dilPct    = (newSh/totSh)*100;
+  const exPct     = 100-dilPct;
+  const netProfitM= rev*(mgn/100);
+  const epsM      = netProfitM/shares;       // annual net profit per M shares
+  const epsCost   = epsM*newSh*yrs;          // total foregone earnings over mine life
+
+  // ── Royalty fundamentals
+  const netRevM = rev * (1 - ded/100);
+  const royaM   = netRevM * (roy/100);
+  const roytM   = royaM * yrs;
+  const retPct  = 100 - (royaM/rev*100);
+
+  // ── NAV: DCF of royalty cashflows
+  const r = dr/100;
+  let nav = 0;
+  for(let t=0;t<yrs;t++) nav += royaM / Math.pow(1+r, lead+t+0.5);
+  const priceToNav = nav>0 ? cap/nav : 0;
+
+  // ── METRIC 1: IRR
+  const eqDivAnnual = newSh * epsM;
+  const eqTerminal  = newSh * ip * Math.pow(1+spg/100, yrs);
+  const eqCFs = [-cap];
+  for(let t=1;t<=yrs;t++) eqCFs.push(eqDivAnnual);
+  eqCFs[yrs] += eqTerminal;
+  const eqIRR = solveIRR(eqCFs) * 100;
+
+  // Royalty buyer pays cap (not nav) — so their actual IRR is back-calculated from that price
+  const royCFs2 = [-cap];
+  const startYr = Math.ceil(lead);
+  for(let t=1;t<=startYr+yrs;t++) royCFs2.push(t>startYr ? royaM : 0);
+  const royIRR = solveIRR(royCFs2, dr/100) * 100;
+
+  // ── METRIC 2: Payback
+  const eqPB  = eqDivAnnual>0 ? cap/eqDivAnnual : Infinity;
+  const royPB = royaM>0 ? cap/royaM : Infinity;
+
+  // ── METRIC 3: Payout multiple
+  const eqMult  = cap>0 ? epsCost/cap : 0;
+  const royMult = cap>0 ? roytM/cap   : 0;
+
+  // ── METRIC 4: Cumulative earnings impact — like-for-like
+  // Equity: foregone net profit = epsCost (already calculated — EPS reduction × new shares × mine life)
+  // Royalty: each royalty payment reduces revenue, which reduces net profit by payment × net margin
+  //   With revenue growth, royalty payments also grow — use the same compounded total
+  const royEarnImpact = roytM * (mgn/100);  // royalty payments × net margin
+
+  // ── Render equity card
+  $('r-newsh').textContent  = fSh(newSh);
+  $('r-dil').textContent    = fP(dilPct);
+  $('r-ip').textContent     = 'A$'+ip.toFixed(3)+' ('+discPct.toFixed(1)+'% disc.)';
+  $('r-eps').textContent    = fM(epsCost);
+  $('r-mgn').textContent    = mgn.toFixed(0)+'%';
+
+  // ── Render royalty card
+  $('r-roya').textContent  = fM(royaM);
+  $('r-royt').textContent  = fM(roytM);
+  $('r-ret').textContent   = fP(retPct,1)+' of gross revenue retained';
+
+  // ── Royalty valuation card
+  $('r-royprice').textContent  = fM(cap);
+  $('r-nav').textContent       = fM(nav);
+  $('r-dr-inline').textContent = dr.toFixed(1)+'%';
+  const lStr = producing ? 'In production' : lead<0.08?'Imminent':lead<1?Math.round(lead*12)+' months':lead.toFixed(1)+' years';
+  $('r-lead').textContent = lStr;
+
+  // Price-to-NAV colour
+  const navEl=$('r-navr');
+  navEl.textContent = priceToNav.toFixed(2)+'× price-to-NAV';
+  navEl.style.color = priceToNav<0.8 ? 'var(--gold)' : priceToNav<=1.0 ? 'var(--bull-d)' : 'var(--bear-d)';
+
+  // ── Benchmark range visualiser
+  // Scale: 0× to 2.0× across the track width
+  const scaleMax = 2.0;
+  const benchLo = bench[0], benchHi = bench[1];
+  const fillLeft  = (benchLo/scaleMax*100).toFixed(1)+'%';
+  const fillWidth = ((benchHi-benchLo)/scaleMax*100).toFixed(1)+'%';
+  const markerLeft= Math.min(99,(priceToNav/scaleMax*100)).toFixed(1)+'%';
+  $('bench-range-fill').style.left  = fillLeft;
+  $('bench-range-fill').style.width = fillWidth;
+  $('bench-marker').style.left      = markerLeft;
+
+  const stageLabel = {pfs:'PFS/DFS', dev:'Development stage', prod:'Operational'}[stage];
+  const commLabel  = commodity==='precious' ? 'Precious' : 'Non-precious';
+  $('bench-label').textContent =
+    `${commLabel} · ${stageLabel} · typical range: ${benchLo.toFixed(1)}× – ${benchHi.toFixed(1)}×`;
+
+  // Marker colour: inside range = gold, below range = orange, above = green
+  const inRange  = priceToNav >= benchLo && priceToNav <= benchHi;
+  const belowRange = priceToNav < benchLo;
+  $('bench-marker').style.background = inRange ? 'var(--bull-m)' : belowRange ? 'var(--bear-m)' : 'var(--bull-d)';
+
+  // ── Context note
+  let nn = '';
+  const stageNames = {pfs:'PFS/DFS stage', dev:'development stage', prod:'operational'};
+  const sn = stageNames[stage];
+
+  if(inRange){
+    nn = `At ${priceToNav.toFixed(2)}×, your implied price-to-NAV multiple sits within the typical market range of ${benchLo.toFixed(1)}×–${benchHi.toFixed(1)}× for a ${commLabel.toLowerCase()} ${sn} project. `;
+    nn += `This is a commercially realistic transaction — the royalty price is consistent with what informed buyers would expect to pay at this stage.`;
+  } else if(belowRange){
+    nn = `At ${priceToNav.toFixed(2)}×, your implied multiple is below the typical ${benchLo.toFixed(1)}×–${benchHi.toFixed(1)}× range for a ${commLabel.toLowerCase()} ${sn} project. `;
+    nn += `To improve the multiple in the miner's favour, the primary levers are: raising more capital (a larger royalty price relative to the same cashflow stream pushes the multiple up), or accepting a lower royalty rate which reduces the NPV and brings price and value closer together. `;
+    nn += `The buyer discount rate will also naturally compress as the project advances — buyers typically apply higher rates to early-stage assets to reflect development risk, reducing toward around 8% once a project is in production. Genuine de-risking through permitting, financing, and construction will move the rate, not negotiation.`;
+  } else {
+    nn = `At ${priceToNav.toFixed(2)}×, your implied multiple is above the typical ${benchLo.toFixed(1)}×–${benchHi.toFixed(1)}× range for a ${commLabel.toLowerCase()} ${sn} project. `;
+    nn += `A sophisticated buyer is unlikely to pay above the market range for this stage and commodity. A lower royalty rate would bring the transaction into a realistic range while still raising the capital required.`;
+  }
+
+  if(!producing && lead > 0.5){
+    nn += ` With ${lStr} to production, the pre-production discount is the dominant pricing factor — buyers reduce their offer the further a project is from first cashflow, reflecting time value of money and development risk. As the project advances toward production, expect the buyer discount rate to compress and the achievable multiple to improve.`;
+  }
+  $('nav-note').textContent = nn;
+
+  // ── Ownership bar
+  requestAnimationFrame(()=>{
+    $('own-ex').style.width=exPct.toFixed(1)+'%';
+    $('own-ex-label').textContent=exPct>14?exPct.toFixed(0)+'%':'';
+    $('own-nw').style.width=dilPct.toFixed(1)+'%';
+    $('own-nw-label').textContent=dilPct>8?dilPct.toFixed(0)+'%':'';
+  });
+
+  // ── Cost of capital section — lower cost = green
+  $('brd-spg-note').textContent = spg.toFixed(1)+'%';
+  $('brd-cap-note').textContent = cap.toFixed(0);
+
+  const eqIRRvalid  = isFinite(eqIRR)  && eqIRR>-50  && eqIRR<500;
+  const royIRRvalid = isFinite(royIRR) && royIRR>-50 && royIRR<500;
+
+  // Row 1: Cost of capital — lower IRR = cheaper for miner = green
+  const eqIRREl  = $('brd-eq-irr');
+  const royIRREl = $('brd-roy-irr');
+  eqIRREl.textContent  = eqIRRvalid  ? fP(eqIRR)  : 'N/A';
+  royIRREl.textContent = royIRRvalid ? fP(royIRR) : 'N/A';
+  if(eqIRRvalid && royIRRvalid) colourPair(eqIRREl, royIRREl, eqIRR, royIRR, true);
+
+  // Row 2: Payback — longer payback = slower drain = better for miner = green
+  const eqPBEl  = $('brd-eq-pb');
+  const royPBEl = $('brd-roy-pb');
+  eqPBEl.textContent  = fPB(eqPB);
+  royPBEl.textContent = fPB(royPB);
+  if(isFinite(eqPB) && isFinite(royPB))
+    colourPair(eqPBEl, royPBEl, eqPB, royPB, false); // higher = better for miner
+
+  // Row 3: Payout multiple — lower = cheaper = green
+  const eqMultEl  = $('brd-eq-mult');
+  const royMultEl = $('brd-roy-mult');
+  eqMultEl.textContent  = eqMult.toFixed(2)+'×';
+  royMultEl.textContent = royMult.toFixed(2)+'×';
+  colourPair(eqMultEl, royMultEl, eqMult, royMult, true);
+
+  // Row 4: Earnings impact — lower = less drag on net profit = green
+  const eqEarnEl  = $('brd-eq-earn');
+  const royEarnEl = $('brd-roy-earn');
+  eqEarnEl.textContent  = fM(epsCost);
+  royEarnEl.textContent = fM(royEarnImpact);
+  colourPair(eqEarnEl, royEarnEl, epsCost, royEarnImpact, true);
+
+  // Summary sentence
+  const irrDiff  = (eqIRRvalid && royIRRvalid) ? eqIRR - royIRR : null;
+  const royWins  = (irrDiff===null||irrDiff>0) && royPB>=eqPB && royMult<=eqMult && royEarnImpact<=epsCost;
+  const eqWins   = irrDiff!==null && irrDiff<0 && eqPB<royPB && eqMult<royMult && epsCost<=royEarnImpact;
+  const royScore = [irrDiff!==null&&irrDiff>0, royPB>=eqPB, royMult<=eqMult, royEarnImpact<=epsCost].filter(Boolean).length;
+
+  if(royWins){
+    $('brd-summary').textContent=`Royalty is the lower cost of capital on all four measures — lower annualised rate, slower payback drain, lower total payout, and less cumulative earnings drag over the mine life.`;
+  } else if(eqWins){
+    $('brd-summary').textContent=`Equity is lower cost on all four measures at these settings. The share price growth assumption is the key variable — lower assumed growth shifts the advantage to royalty.`;
+  } else {
+    $('brd-summary').textContent=`Royalty wins ${royScore} of 4 cost metrics. The cost of capital rate and cumulative earnings impact are the most meaningful measures — adjust the share price growth assumption to test sensitivity.`;
+  }
+
+  // ── Verdict
+  const sav = epsCost - roytM;
+  if(sav>0 || royWins){
+    $('v-head').textContent=`Royalty finance is the lower cost of capital on a like-for-like basis`;
+    $('v-body').textContent=
+      `A ${parseFloat(roy).toFixed(2)}% royalty on A$${rev}M revenue costs A$${royaM.toFixed(1)}M per year. `+
+      `The royalty buyer, paying A$${cap}M, earns an implied IRR of ${royIRRvalid?fP(royIRR):'—'} — `+
+      `versus ${eqIRRvalid?fP(eqIRR):'an estimated '+spg.toFixed(1)+'%+'} for an equity investor assuming ${spg.toFixed(1)}% p.a. share price growth. `+
+      `Total royalty payments of A$${roytM.toFixed(1)}M represent a ${royMult.toFixed(2)}× payout multiple, versus ${eqMult.toFixed(2)}× for equity. No dilution, no placement discount, and no permanent transfer of equity ownership.`;
+  } else {
+    $('v-head').textContent=`Equity may be lower cost — review the share price growth assumption`;
+    $('v-body').textContent=
+      `At ${spg.toFixed(1)}% assumed annual share price growth, the implied equity IRR is ${eqIRRvalid?fP(eqIRR):'high'}, `+
+      `below the royalty buyer's back-calculated IRR of ${royIRRvalid?fP(royIRR):'—'} on a A$${cap}M payment. `+
+      `ProspEx can model the crossover growth rate at which royalty becomes the cheaper option for your specific project.`;
+  }
+} // end _calc
+
+// Ticker lookup
+async function lookupTicker(){
+  const raw=($('i-ticker').value||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  const btn=$('lup-btn'), sb=$('s-bar');
+  if(!raw){showS('err','Enter an ASX ticker — e.g. MIN, PLS, LTR');return;}
+  btn.textContent='Loading…'; btn.disabled=true;
+  showS('loading','Looking up '+raw+'…');
+  const url=`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${raw}.AX?modules=price,defaultKeyStatistics`;
+  try{
+    const r=await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,{signal:AbortSignal.timeout(10000)});
+    if(!r.ok) throw new Error();
+    const d=JSON.parse((await r.json()).contents);
+    const res=d?.quoteSummary?.result?.[0];
+    if(!res) throw new Error('not found');
+    const pd=res.price, sd=res.defaultKeyStatistics;
+    const price=pd?.regularMarketPrice?.raw;
+    const sharesRaw=sd?.sharesOutstanding?.raw||pd?.sharesOutstanding?.raw;
+    if(!price) throw new Error('no price');
+    $('i-price').value=price.toFixed(3);
+    if(sharesRaw) $('i-shares').value=(sharesRaw/1e6).toFixed(1);
+    $('i-rprice').value=(price*(1-(+$('i-discount').value||15)/100)).toFixed(3);
+    const name=pd?.longName||pd?.shortName||raw;
+    const shStr=sharesRaw?`· ${(sharesRaw/1e6).toFixed(0)}M shares`:'· enter shares manually';
+    showS('ok',`✓ ${name} (${raw}) — A$${price.toFixed(3)} ${shStr}`);
+    calc();
+  } catch(e){
+    showS('err',`Could not load "${raw}". Check the ticker or enter values manually.`);
+  } finally{ btn.textContent='Look up'; btn.disabled=false; }
+}
+
+function showS(type,msg){
+  const el=$('s-bar'); el.textContent=msg; el.className='s-bar '+type; el.style.display='block';
+}
+
+loadFromURL();
+calc();
+</script>
+
+
+</body><div id="aiFabShadowRoot" data-fab-type="react" style="opacity: 1;"><template shadowrootmode="open"><div id="fab-react-root"><div class="fab-root"><div class="acrobat-button-container " style="bottom: 36px;"><div class="acrobat-button " role="button" aria-label="Get summaries and key insights using AI Assistant"><button class="close-btn  "><svg class="close-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="mask0_8552_7892" maskUnits="userSpaceOnUse" x="0" y="0" width="14" height="14" style="mask-type: alpha;"><path d="M7.82482 7.00034L10.6374 4.18778C10.7893 4.03592 10.7893 3.78969 10.6374 3.63783L10.3625 3.36292C10.2106 3.21106 9.96446 3.21106 9.81255 3.36292L6.99995 6.17548L4.18734 3.36292C4.03543 3.21106 3.78933 3.21106 3.63743 3.36292L3.36247 3.63783C3.21056 3.78969 3.21056 4.03592 3.36247 4.18778L6.17507 7.00034L3.36247 9.81295C3.21056 9.96481 3.21056 10.2111 3.36247 10.3629L3.63743 10.6378C3.78933 10.7897 4.03543 10.7897 4.18734 10.6378L6.99995 7.82526L9.81255 10.6378C9.96446 10.7897 10.2106 10.7897 10.3625 10.6378L10.6374 10.3629C10.7893 10.2111 10.7893 9.96481 10.6374 9.81295L7.82482 7.00034Z" fill="#222222"></path></mask><g mask="url(#mask0_8552_7892)"><rect width="14" height="14"></rect></g></svg><svg class="burger-icon" width="21" height="17" viewBox="0 0 21 17" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="mask0_12188_28876" maskUnits="userSpaceOnUse" x="3" y="3" width="15" height="14" style="mask-type: alpha;"><path d="M15.1285 12.8008H6.37852C6.08867 12.8008 5.85352 13.0359 5.85352 13.3258C5.85352 13.6156 6.08867 13.8508 6.37852 13.8508H15.1285C15.4184 13.8508 15.6535 13.6156 15.6535 13.3258C15.6535 13.0359 15.4184 12.8008 15.1285 12.8008Z" fill="#292929"></path><path d="M6.37852 6.85078H15.1285C15.4184 6.85078 15.6535 6.61562 15.6535 6.32578C15.6535 6.03594 15.4184 5.80078 15.1285 5.80078H6.37852C6.08867 5.80078 5.85352 6.03594 5.85352 6.32578C5.85352 6.61562 6.08867 6.85078 6.37852 6.85078Z" fill="#292929"></path><path d="M15.1285 9.30078H6.37852C6.08867 9.30078 5.85352 9.53594 5.85352 9.82578C5.85352 10.1156 6.08867 10.3508 6.37852 10.3508H15.1285C15.4184 10.3508 15.6535 10.1156 15.6535 9.82578C15.6535 9.53594 15.4184 9.30078 15.1285 9.30078Z" fill="#292929"></path></mask><g mask="url(#mask0_12188_28876)"><rect x="3.75391" y="3" width="14" height="14" fill="#464646"></rect></g></svg></button><div class="icon-container" role="button" tabindex="0" aria-label="Open AI Assistant"><svg id="ImportedIcons" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" class="fab-svg-icon"><path d="m6.21661,16.39534c-1.35034,2.23499-2.67933,3.64758-3.45616,3.64758-.12795.00539-.25276-.04056-.34667-.12762-.14818-.12483-.21629-.32065-.17758-.5105.14764-.80079,1.68628-1.95576,3.98041-3.00946Zm6.49075-3.19656c-.57993.12528-1.1792.27056-1.78689.43544-.4366.11893-.87951.24862-1.32255.38729.23541-.4949.4515-.98554.6398-1.452.24831-.6159.48156-1.232.69564-1.83456.18831.30354.38304.59839.58195.88207.39375.56092.81787,1.09736,1.19205,1.58176Zm-2.99822-10.63684c.08814-.18001.26644-.29855.46653-.31016.51149,0,.62276.63358.62276,1.1638-.06787,1.25011-.29293,2.48669-.66988,3.68055-.85816-2.33642-.73831-3.97319-.41942-4.53419h.00001Zm9.60883,12.20974c-.13359.4402-.56725.71808-1.023.6555-.15594-.00061-.3112-.02054-.46224-.05933-1.07834-.28263-2.07953-.80363-2.92976-1.5246.71719-.11267,1.44198-.17001,2.16797-.17149.48402-.00813.96771.03017,1.44442.11438.43447.09244.92449.33873.80261.98554Zm1.45515-1.0537c-1.01837-.83309-2.33117-1.21735-3.63802-1.06487-.98482.00983-1.96732.09739-2.93836.26187-.62354-.62512-1.19003-1.30467-1.69272-2.03054-.38314-.54455-.73672-1.10931-1.05923-1.69182.54287-1.57384.85986-3.2167.94151-4.87953,0-1.49369-.57564-3.09087-2.19132-3.09087-.56296.01952-1.07528.33036-1.35261.82066-.68906,1.2165-.41298,3.72002.68705,6.26756-.38306,1.17041-.80046,2.31007-1.31196,3.57265-.43687,1.08123-.93191,2.13803-1.48293,3.16579-1.64775.68213-5.15115,2.33642-5.48494,4.16456-.10306.53569.0783,1.08658.47942,1.45629.39145.35044.90217.53779,1.42737.5236,2.10998,0,4.21366-3.003,5.63044-5.58789.80461-.2816,1.62641-.53671,2.44391-.759.8967-.24407,1.76345-.44427,2.58082-.594,1.39014,1.39224,3.25004,2.21523,5.21531,2.30773,1.36751,0,1.87887-.60942,2.06516-1.122.20733-.5893.08589-1.24438-.3189-1.72019Z" fill="var(--iconRed, #d31510)" fill-rule="evenodd"></path></svg></div></div><div class="draggable-handle "><svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.60039 13.0699C5.26313 13.0699 5.80039 12.5327 5.80039 11.8699C5.80039 11.2072 5.26313 10.6699 4.60039 10.6699C3.93765 10.6699 3.40039 11.2072 3.40039 11.8699C3.40039 12.5327 3.93765 13.0699 4.60039 13.0699Z" fill="#292929"></path><path d="M4.60039 8.27109C5.26313 8.27109 5.80039 7.73384 5.80039 7.07109C5.80039 6.40835 5.26313 5.87109 4.60039 5.87109C3.93765 5.87109 3.40039 6.40835 3.40039 7.07109C3.40039 7.73384 3.93765 8.27109 4.60039 8.27109Z" fill="#292929"></path><path d="M4.60039 3.47031C5.26313 3.47031 5.80039 2.93305 5.80039 2.27031C5.80039 1.60757 5.26313 1.07031 4.60039 1.07031C3.93765 1.07031 3.40039 1.60757 3.40039 2.27031C3.40039 2.93305 3.93765 3.47031 4.60039 3.47031Z" fill="#292929"></path><path d="M9.4002 13.0699C10.0629 13.0699 10.6002 12.5327 10.6002 11.8699C10.6002 11.2072 10.0629 10.6699 9.4002 10.6699C8.73745 10.6699 8.2002 11.2072 8.2002 11.8699C8.2002 12.5327 8.73745 13.0699 9.4002 13.0699Z" fill="#292929"></path><path d="M9.4002 8.27109C10.0629 8.27109 10.6002 7.73384 10.6002 7.07109C10.6002 6.40835 10.0629 5.87109 9.4002 5.87109C8.73745 5.87109 8.2002 6.40835 8.2002 7.07109C8.2002 7.73384 8.73745 8.27109 9.4002 8.27109Z" fill="#292929"></path><path d="M9.4002 3.47031C10.0629 3.47031 10.6002 2.93305 10.6002 2.27031C10.6002 1.60757 10.0629 1.07031 9.4002 1.07031C8.73745 1.07031 8.2002 1.60757 8.2002 2.27031C8.2002 2.93305 8.73745 3.47031 9.4002 3.47031Z" fill="#292929"></path></svg></div></div></div></div><style>
+    .acrobat-button-container {
+        position: fixed;
+        right: 0;
+        bottom: 36px;
+        z-index: 2147483646;
+        visibility: visible !important;
+        pointer-events: all;
+        opacity: 1;
+        display: flex;
+        align-items: center;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    @media print {
+        .acrobat-button-container {
+            display: none !important;
+        }
+    }
+
+    .acrobat-button {
+        position: relative;
+        background: white;
+        display: flex;
+        align-items: center;
+        pointer-events: all;
+        touch-action: none;
+        box-shadow: 0px 2px 8px 0px #00000029;
+        height: 34px;
+        width: 34px;
+        border: 1px solid transparent;
+        background-clip: padding-box, border-box;
+        background-origin: border-box;
+        background-image: linear-gradient(white, white),
+                        linear-gradient(95.85deg, #D73220 0%, #D92361 33%, #7155FA 100%);
+        border-radius: 18px;
+        justify-content: right;
+        margin-right: var(--fab-margin-right, 28px);
+        overflow: hidden;
+    }
+
+    .acrobat-button-container-transparent {
+        opacity: 0.4 !important;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .acrobat-button-container-transparent:hover,
+    .acrobat-button-container-transparent:focus,
+    .acrobat-button-container-transparent:active {
+        opacity: 1;
+    }
+
+    .acrobat-button > svg {
+        flex-shrink: 0;
+        margin: 4px 5px 5px 5px;
+        width: 22px;
+        height: 22px;
+        pointer-events: none;
+        fill: #b40000;
+    }
+    .acrobat-button:has(.close-btn.open),
+    .expand-acrobat-button {
+        width: 64px;
+    }
+
+    .disabled {
+        background: #B1B1B1;
+    }
+
+    .tooltip-text {
+        width: 160px;
+        visibility: hidden;
+        opacity: 0;
+        background-color: #FFFFFF;
+        color: #292929;
+        border-radius: 7px;
+        padding: 4px 1px 5px 9px;
+        position: absolute;
+        z-index: 1;
+        right: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-right: 10px;
+        transition: opacity 0.3s, visibility 0s linear 2s;
+        font-size: 12px;
+        line-height: 15px;
+        font-family: 'adobe-clean', Adobe Clean, sans-serif;
+        filter: drop-shadow(0px 1px 6px rgba(0, 0, 0, 0.12));
+    }
+
+    .tooltip-text::after {
+       content: '';
+       position: absolute;
+       top: 50%;
+       left: 100%;
+       transform: translateY(-50%);
+       border-width: 6px;
+       border-style: solid;
+       border-color: transparent transparent transparent #fff;
+    }
+
+    .show-tooltip {
+        visibility: visible;
+        opacity: 1;
+        line-height: 1.5;
+        font-family: 'adobe-clean', Adobe Clean, sans-serif;
+        transition: opacity 0.3s;
+        transition-delay: 500ms;
+    }
+
+    .close-btn {
+        position: relative;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-btn svg {
+        fill: #464646;
+    }
+
+    .close-btn.showCloseButton {
+        opacity: 1;
+        display: flex;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        padding: 2px;
+    }
+
+    .fab-view-settings-dialog {
+        display: none;
+        position: absolute;
+        bottom: 40px;
+        z-index: 1;
+    }
+
+    .close-btn:hover {
+        background: #E6E6E6;
+        border-radius: 50%; /* Keep original circular hover */
+        cursor: pointer;
+    }
+
+    .fab-view-settings-dialog.showDialog {
+        display: block;
+    }
+    .close-btn .burger-icon {
+        display: inline;
+        margin-bottom: 2px;
+    }
+    .close-btn .close-icon {
+        display: none;
+    }
+    .close-btn.open .burger-icon {
+        display: none;
+    }
+    .close-btn.open .close-icon {
+        display: inline;
+    }
+    .tooltip-text .tooltip-text-content {
+        font-weight: bold;
+    }
+    .tooltip-text .tooltip-sub-text-text {
+        font-style: italic;
+        font-size: 11px;
+    }
+
+    /* Icon container styles - replaces iframe */
+    .icon-container {
+        width: 33px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: grab;
+        pointer-events: all;
+        flex-shrink: 0;
+        background: transparent;
+        border: none;
+    }
+
+    .icon-container:active {
+        cursor: grabbing;
+    }
+
+    .fab-svg-icon {
+        width: 22px;
+        height: 22px;
+        padding: 5px 5px 5px 6px;
+        pointer-events: none;
+        fill: #b40000;
+    }
+
+    .draggable-handle {
+        display: none;
+        position: absolute;
+        right: var(--drag-handle-right, 12px);
+        cursor: grab;
+    }
+    .draggable-handle-visible {
+        display: flex;
+    }
+
+    /* Font face declarations - for proper font loading in Shadow DOM */
+    @font-face {
+        font-family: 'adobe-clean';
+        font-weight: 400;
+        src: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/css/fonts/AdobeClean-Regular.otf') format('opentype');
+    }
+    @font-face {
+        font-family: 'adobe-clean';
+        font-weight: 700;
+        src: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/css/fonts/AdobeClean-Bold.otf') format('opentype');
+    }
+    @font-face {
+        font-family: 'AdobeClean-Regular';
+        src: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/css/fonts/AdobeClean-Regular.otf') format('opentype');
+    }
+    @font-face {
+        font-family: 'AdobeClean-Bold';
+        src: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/css/fonts/AdobeClean-Bold.otf') format('opentype');
+    }
+    body {
+        font-family: 'AdobeClean-Regular', adobe-clean, "Adobe Clean", sans-serif;
+    }
+
+    .dialog-container {
+        width: 166px;
+        background-color: #ffffff;
+        border-radius: 4px;
+        border: 1px solid #B1B1B1;
+        box-shadow: 0px 1px 4px 0px #00000026;
+        z-index: 1000;
+        padding: 4px;
+        position: relative;
+        margin: 4px 0px;
+    }
+
+    .menu {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .menu .menu_item {
+        cursor: pointer;
+        font-family: 'AdobeClean-Regular', adobe-clean, "Adobe Clean", sans-serif;
+        align-content: center;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 18.2px;
+        text-align: left;
+        color: #222222;
+        padding: 0px 12px;
+        height: 32px;
+        width: 140px;
+    }
+
+    .menu .menu_item:hover {
+        background-color: #eaeaea;
+    }
+
+    .preferences {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18.2px;
+        text-align: left;
+        color: #464646;
+    }
+
+    .divider {
+        border-top: 1px solid #E6E6E6;
+    }
+
+    /* React-specific wrappers - minimal */
+    .fab-root {
+        font-family: 'adobe-clean', Adobe Clean, sans-serif;
+    }
+
+    button.close-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 10; /* Ensure clickable above all other elements */
+        pointer-events: auto;
+    }
+
+    /* FAB Action Pills - From Figma Design */
+    .fab-pills-container {
+        position: absolute;
+        bottom: 42px; /* FAB height (34px) + gap (8px) = 42px */
+        right: var(--fab-margin-right, 28px);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-end;
+        width: 142px;
+        z-index: 1;
+    }
+
+    .fab-pills-container.pills-below {
+        bottom: auto;
+        top: 42px; /* Same gap when positioned below */
+    }
+
+    /* Extend hover area using ::after pseudo-element - doesn't affect visual layout */
+    .fab-pills-container::after {
+        content: '';
+        position: absolute;
+        top: 100%; /* Start right after the pills content */
+        left: 0;
+        right: 0;
+        height: 8px;
+        background: transparent;
+        pointer-events: auto;
+    }
+
+    .fab-pills-container.pills-below::after {
+        top: auto;
+        bottom: 100%; /* Start right before the pills when positioned below */
+    }
+
+    /* FTE Header - First Time Experience (56px with close button) */
+    .fab-fte-header {
+        position: relative;
+        width: 142px;
+        min-height: 56px;
+        background: #FFFFFF;
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 6px 0px rgba(0, 0, 0, 0.04), 0px 0px 2px 0px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
+
+    .fab-fte-background {
+        position: absolute;
+        left: -13px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 183.33px;
+        height: 126.82px;
+        background: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/images/fab-header-background.svg') no-repeat center;
+        background-size: cover;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .fab-fte-close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        z-index: 2;
+        color: #222222;
+        padding: 0;
+    }
+
+    .fab-fte-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+    }
+
+    .fab-fte-close svg {
+        width: 8px;
+        height: 8px;
+    }
+
+    .fab-fte-text {
+        position: relative;
+        width: 102px;
+        font-family: 'AdobeClean-Bold', adobe-clean, sans-serif;
+        font-weight: 400; /* Use Bold font file directly, not synthetic bold */
+        font-size: 12px;
+        line-height: 16px;
+        color: #222222; /* Figma spec color */
+        z-index: 1;
+        white-space: normal;
+        word-wrap: break-word;
+        margin-left: 16px;
+        margin-right: auto;
+        box-sizing: border-box;
+        -webkit-font-smoothing: subpixel-antialiased; /* Better font rendering */
+        -moz-osx-font-smoothing: auto;
+    }
+
+    /* Hover Header - Normal state (24px without close button) */
+    .fab-hover-header {
+        position: relative;
+        width: 142px;
+        min-height: 24px;
+        background: #FFFFFF; /* White background to show the colorful SVG and text */
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 6px 0px rgba(0, 0, 0, 0.04), 0px 0px 2px 0px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .fab-hover-background {
+        position: absolute;
+        left: -27px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 212.63px;
+        height: 147.09px;
+        background: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/images/fab-header-background.svg') no-repeat center;
+        background-size: cover;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .fab-hover-text {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'AdobeClean-Bold', adobe-clean, sans-serif;
+        font-weight: 400; /* Use Bold font file directly, not synthetic bold */
+        font-size: 12px;
+        line-height: 15px;
+        color: #222222; /* Figma spec color */
+        z-index: 1;
+        white-space: normal;
+        padding: 4px 9px;
+        box-sizing: border-box;
+        -webkit-font-smoothing: subpixel-antialiased; /* Better font rendering */
+        -moz-osx-font-smoothing: auto;
+    }
+
+    /* Individual Pill Buttons */
+    .fab-pill-button {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+        width: 142px;
+        min-height: 24px; /* Min height, allows growth with content */
+        background: #FFFFFF;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 6px 0px rgba(0, 0, 0, 0.04), 0px 0px 2px 0px rgba(0, 0, 0, 0.12);
+        cursor: pointer;
+        padding: 0;
+        transition: background 0.2s ease;
+        overflow: visible;
+    }
+
+    .fab-pill-button:hover {
+        background: #D5D5D5;
+    }
+
+    .fab-pill-button:hover .fab-pill-label,
+    .fab-pill-button:hover .fab-pill-icon {
+        color: #000000; /* Hover state color from Figma Alias/content/neutral/hover */
+    }
+
+    .fab-pill-button:active {
+        background: #F4F4F4;
+    }
+
+    .fab-pill-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 7px 4px 10px; /* Exact Figma specs: top right bottom left */
+        flex-shrink: 0;
+        box-sizing: border-box;
+    }
+
+    .fab-pill-icon img {
+        width: 16px;
+        height: 16px;
+        display: block;
+        flex-shrink: 0;
+        /* SVG icons with currentColor fill will inherit color from parent */
+        filter: brightness(0) saturate(100%) invert(13%) sepia(0%) saturate(0%) hue-rotate(196deg) brightness(97%) contrast(97%); /* #222222 */
+    }
+
+    .fab-pill-button:hover .fab-pill-icon img {
+        filter: brightness(0) saturate(100%); /* #000000 on hover */
+    }
+
+    .fab-pill-label {
+        display: flex;
+        align-items: center;
+        font-family: 'AdobeClean-Bold', adobe-clean, sans-serif;
+        font-weight: 400; /* Use Bold font file directly, not synthetic bold */
+        font-size: 12px;
+        line-height: 15px; /* 1.252 * 12px = 15.024px */
+        color: #222222; /* Default text color from Figma Alias/content/neutral/default */
+        padding: 4px 9px 5px 0; /* Reduced right padding to prevent wrapping */
+        text-align: left;
+        white-space: normal; /* Allow text wrapping for multi-line content */
+        box-sizing: border-box;
+        flex: 1;
+        overflow: visible;
+        -webkit-font-smoothing: subpixel-antialiased; /* Better font rendering */
+        -moz-osx-font-smoothing: auto;
+    }
+</style></template></div></html>
