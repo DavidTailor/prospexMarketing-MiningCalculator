@@ -1,0 +1,568 @@
+<div class="prospex-calculator_component" data-prospex-calculator>
+<div class="prospex-calculator_share-toast" id="share-toast">Link copied to clipboard ✓</div>
+
+<div class="prospex-calculator_wrap">
+  <div class="prospex-calculator_grid">
+
+    <!-- INPUTS -->
+    <div class="prospex-calculator_inp-panel">
+      <div class="prospex-calculator_inp-hd">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+          <div class="prospex-calculator_inp-hd-title">Project Parameters</div>
+          <button type="button" class="prospex-calculator_reset-btn" data-prospex-action="reset">Reset</button>
+        </div>
+        <div class="prospex-calculator_inp-hd-sub">All inputs update results instantly</div>
+      </div>
+      <div class="prospex-calculator_progress-wrap">
+        <div class="prospex-calculator_progress-label">
+          <span class="prospex-calculator_progress-label-text">Inputs personalised</span>
+          <span class="prospex-calculator_progress-label-pct" id="prog-pct">0%</span>
+        </div>
+        <div class="prospex-calculator_progress-track"><div class="prospex-calculator_progress-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="prospex-calculator_inp-body">
+
+        <span class="prospex-calculator_sec-lbl">Share structure</span>
+
+        <!-- Ticker -->
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">ASX Ticker <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;color:var(--prospex-t3);">— auto-fills price &amp; shares</span></div>
+          <div class="prospex-calculator_ticker-row">
+            <div class="prospex-calculator_f-row"><span class="prospex-calculator_pfx" style="font-size:10px;letter-spacing:1px;">ASX</span><input class="prospex-calculator_fi" id="i-ticker" type="text" placeholder="e.g. MIN, PLS" maxlength="6"></div>
+            <button type="button" class="prospex-calculator_lup-btn" id="lup-btn" data-prospex-action="lookup-ticker">Look up</button>
+          </div>
+          <div class="prospex-calculator_s-bar" id="s-bar"></div>
+        </div>
+
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">Current Share Price</div>
+          <div class="prospex-calculator_f-row"><span class="prospex-calculator_pfx">A$</span><input class="prospex-calculator_fi" id="i-price" type="number" value="0.45" min="0.001" step="0.001"><span class="prospex-calculator_sfx">per share</span></div>
+        </div>
+
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">Shares on Issue</div>
+          <div class="prospex-calculator_f-row"><input class="prospex-calculator_fi" id="i-shares" type="number" value="270" min="1" step="1"><span class="prospex-calculator_sfx">M shares</span></div>
+        </div>
+
+        <!-- Raise price toggle -->
+        <div class="prospex-calculator_field">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div class="prospex-calculator_f-lbl" style="margin:0">Raise Price</div>
+            <div class="prospex-calculator_mode-tog">
+              <button type="button" class="prospex-calculator_mode-btn prospex-calculator_on" id="btn-disc" data-prospex-mode="discount">Discount %</button>
+              <button type="button" class="prospex-calculator_mode-btn" id="btn-dir" data-prospex-mode="direct">Set price</button>
+            </div>
+          </div>
+          <div id="md-discount">
+            <div class="prospex-calculator_sl-live" id="disc-live">15%</div>
+            <input type="range" id="i-discount" min="1" max="40" value="15" step="1" style="background: linear-gradient(to right,var(--prospex-gold) 0%,var(--prospex-gold) 35.8974358974359%,#e4e9f0 35.8974358974359%);">
+            <div class="prospex-calculator_sl-labels"><span>1%</span><span>40%</span></div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;">
+              <span class="prospex-calculator_f-hint">Discount to market price</span>
+              <span class="prospex-calculator_derived">Issue price: <span id="der-price">A$0.383</span></span>
+            </div>
+          </div>
+          <div id="md-direct" style="display:none">
+            <div class="prospex-calculator_f-row"><span class="prospex-calculator_pfx">A$</span><input class="prospex-calculator_fi" id="i-rprice" type="number" value="0.383" min="0.001" step="0.001"><span class="prospex-calculator_sfx">issue price</span></div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;">
+              <span class="prospex-calculator_f-hint">Price you will raise at</span>
+              <span class="prospex-calculator_derived">Implied discount: <span id="der-disc">15.1%</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">Capital Required</div>
+          <div class="prospex-calculator_f-row"><span class="prospex-calculator_pfx">A$</span><input class="prospex-calculator_fi" id="i-capital" type="number" value="25" min="1" max="500" step="1"><span class="prospex-calculator_sfx">M</span></div>
+          <div class="prospex-calculator_f-hint">Total amount to raise · <span style="color:var(--prospex-navy);font-weight:600;">ProspEx issues fractionally</span> — your royalty is distributed across a broad investor base under a single agreement, rather than concentrated with a single counterparty with no path to liquidity.</div>
+        </div>
+
+        <div class="prospex-calculator_divider"></div>
+        <span class="prospex-calculator_sec-lbl">Revenue &amp; royalty</span>
+
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">Projected Annual Revenue</div>
+          <div class="prospex-calculator_f-row"><span class="prospex-calculator_pfx">A$</span><input class="prospex-calculator_fi" id="i-revenue" type="number" value="300" min="1" step="1"><span class="prospex-calculator_sfx">M / yr</span></div>
+          <div class="prospex-calculator_f-hint">Expected mine revenue once in production</div>
+        </div>
+
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">Net Profit Margin</div>
+          <div class="prospex-calculator_sl-live" id="margin-live">20%</div>
+          <input type="range" id="i-margin" min="1" max="60" value="20" step="1" style="background: linear-gradient(to right,var(--prospex-gold) 0%,var(--prospex-gold) 32.20338983050847%,#e4e9f0 32.20338983050847%);">
+          <div class="prospex-calculator_sl-labels"><span>1%</span><span>60%</span></div>
+          <div class="prospex-calculator_f-hint">Used for foregone-earnings calc · typical mining range 15–35%</div>
+        </div>
+
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">Royalty Rate</div>
+          <div class="prospex-calculator_sl-live" id="roy-live">2.00%</div>
+          <input type="range" id="i-royalty" min="0.5" max="5" value="2" step="0.25" style="background: linear-gradient(to right,var(--prospex-gold) 0%,var(--prospex-gold) 33.33333333333333%,#e4e9f0 33.33333333333333%);">
+          <div class="prospex-calculator_sl-labels"><span>0.5%</span><span>5.0%</span></div>
+          <div class="prospex-calculator_f-hint">Applied to net revenue after allowable deductions below</div>
+        </div>
+
+        <div class="prospex-calculator_field">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="prospex-calculator_f-lbl" style="margin:0;white-space:nowrap;">Allowable Deductions</div>
+            <div class="prospex-calculator_f-row" style="width:100px;flex-shrink:0;">
+              <input class="prospex-calculator_fi" id="i-ded" type="number" value="2" min="0" max="100" step="0.5" style="text-align:right;">
+              <span class="prospex-calculator_sfx">%</span>
+            </div>
+          </div>
+          <div class="prospex-calculator_f-hint" style="margin-top:4px;">% of revenue deducted before royalty is applied — e.g. transport, treatment &amp; refining charges. 0% = gross revenue royalty.</div>
+        </div>
+
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">Mine Life</div>
+          <div class="prospex-calculator_sl-live" id="yr-live">15 years</div>
+          <input type="range" id="i-years" min="5" max="40" value="15" step="1" style="background: linear-gradient(to right,var(--prospex-gold) 0%,var(--prospex-gold) 28.57142857142857%,#e4e9f0 28.57142857142857%);">
+          <div class="prospex-calculator_sl-labels"><span>5 yrs</span><span>40 yrs</span></div>
+          <div class="prospex-calculator_f-hint">Royalty runs for the full life of mine</div>
+        </div>
+
+        <div class="prospex-calculator_divider"></div>
+        <span class="prospex-calculator_sec-lbl">Royalty valuation</span>
+
+        <div class="prospex-calculator_field">
+          <!-- Already in production checkbox -->
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <input type="checkbox" id="i-producing" style="width:16px;height:16px;accent-color:var(--prospex-navy);cursor:pointer;flex-shrink:0;">
+            <label for="i-producing" style="font-size:11px;font-weight:700;color:var(--prospex-t1);cursor:pointer;line-height:1.3;">Project is already in production</label>
+          </div>
+
+          <!-- Pre-production fields — hidden when producing -->
+          <div id="preprod-fields">
+            <div class="prospex-calculator_f-lbl" style="margin-bottom:5px;">Project Start Date</div>
+            <div class="prospex-calculator_f-row" style="margin-bottom:5px;"><input class="prospex-calculator_fi" id="i-start" type="month" value="2027-06"></div>
+            <div class="prospex-calculator_f-hint">When production begins — royalty cashflows start here</div>
+          </div>
+        </div>
+
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">Project Stage</div>
+          <div class="prospex-calculator_f-row" style="padding:0;">
+            <select class="prospex-calculator_fi" id="i-stage" style="height:38px;font-size:12px;font-weight:600;cursor:pointer;">
+              <option value="pfs">PFS / DFS</option>
+              <option value="dev" selected="">Development stage</option>
+              <option value="prod">Operational / producing</option>
+            </select>
+          </div>
+          <div class="prospex-calculator_f-hint">Used to determine typical market NAV multiple range</div>
+        </div>
+
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">Commodity Type</div>
+          <div class="prospex-calculator_f-row" style="padding:0;">
+            <select class="prospex-calculator_fi" id="i-commodity" style="height:38px;font-size:12px;font-weight:600;cursor:pointer;">
+              <option value="nonprecious" selected="">Non-precious (base metals, battery metals, bulk)</option>
+              <option value="precious">Precious (gold, silver, PGMs)</option>
+            </select>
+          </div>
+          <div class="prospex-calculator_f-hint">Precious metals royalties typically attract higher NAV multiples</div>
+        </div>
+
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">Buyer Discount Rate</div>
+          <div class="prospex-calculator_sl-live" id="dr-live">8.0%</div>
+          <input type="range" id="i-dr" min="4" max="20" value="8" step="0.5" style="background: linear-gradient(to right,var(--prospex-gold) 0%,var(--prospex-gold) 25%,#e4e9f0 25%);">
+          <div class="prospex-calculator_sl-labels"><span>4%</span><span>20%</span></div>
+          <div class="prospex-calculator_f-hint">Rate a royalty buyer applies to future cashflows</div>
+        </div>
+
+        <div class="prospex-calculator_field">
+          <div class="prospex-calculator_f-lbl">Assumed Share Price Growth</div>
+          <div class="prospex-calculator_sl-live" id="spg-live">8.0% p.a.</div>
+          <input type="range" id="i-spg" min="0" max="30" value="8" step="0.5" style="background: linear-gradient(to right,var(--prospex-gold) 0%,var(--prospex-gold) 26.666666666666668%,#e4e9f0 26.666666666666668%);">
+          <div class="prospex-calculator_sl-labels"><span>0%</span><span>30%</span></div>
+          <div class="prospex-calculator_f-hint">Annual share price appreciation assumed for equity IRR calc · reflects the return new shareholders expect</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="prospex-calculator_results">
+
+      <!-- Results banner — mirrors the inputs panel header -->
+      <div style="background:var(--prospex-gold);border-radius:10px;padding:16px 20px;box-shadow:var(--prospex-sh-m);">
+        <div style="font-size:13px;font-weight:800;color:var(--prospex-navy-d);margin-bottom:2px;">Analysis Results</div>
+        <div style="font-size:10.5px;color:rgba(0,24,48,.55);">Updates instantly as you adjust parameters</div>
+      </div>
+
+      <!-- Two summary cards -->
+      <div class="prospex-calculator_two-col">
+
+        <!-- Equity card -->
+        <div class="prospex-calculator_card">
+          <div class="prospex-calculator_card-hd">
+            <div class="prospex-calculator_card-dot" style="background:var(--prospex-bear-m)"></div>
+            <div class="prospex-calculator_card-title">Equity Raise</div>
+
+          </div>
+          <div class="prospex-calculator_metrics">
+            <div class="prospex-calculator_met">
+              <div class="prospex-calculator_met-lbl">New shares to issue</div>
+              <span class="prospex-calculator_met-val prospex-calculator_bad" id="r-newsh">65.4M shares</span>
+            </div>
+            <div class="prospex-calculator_met">
+              <div class="prospex-calculator_met-lbl">Dilution to existing holders</div>
+              <span class="prospex-calculator_met-val prospex-calculator_bad" id="r-dil">19.5%</span>
+            </div>
+            <div class="prospex-calculator_met">
+              <div class="prospex-calculator_met-lbl">Issue price</div>
+              <span class="prospex-calculator_met-val prospex-calculator_navy" id="r-ip">A$0.383 (15.0% disc.)</span>
+            </div>
+            <div class="prospex-calculator_met prospex-calculator_met-hl">
+              <div>
+                <div class="prospex-calculator_met-lbl">Total foregone earnings (mine life)</div>
+                <div class="prospex-calculator_met-sub">EPS × new shares × mine life · at <span id="r-mgn">20%</span> net margin</div>
+              </div>
+              <span class="prospex-calculator_met-val prospex-calculator_bad" id="r-eps">A$217.9M</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Royalty card -->
+        <div class="prospex-calculator_card">
+          <div class="prospex-calculator_card-hd">
+            <div class="prospex-calculator_card-dot" style="background:var(--prospex-bull-m)"></div>
+            <div class="prospex-calculator_card-title">Royalty Finance</div>
+
+          </div>
+          <div class="prospex-calculator_metrics">
+            <div class="prospex-calculator_met">
+              <div class="prospex-calculator_met-lbl">Shares issued</div>
+              <span class="prospex-calculator_met-val prospex-calculator_good">Zero</span>
+            </div>
+            <div class="prospex-calculator_met">
+              <div class="prospex-calculator_met-lbl">Dilution to existing holders</div>
+              <span class="prospex-calculator_met-val prospex-calculator_good">0%</span>
+            </div>
+            <div class="prospex-calculator_met">
+              <div class="prospex-calculator_met-lbl">Annual royalty payment</div>
+              <span class="prospex-calculator_met-val prospex-calculator_gold" id="r-roya">A$5.9M</span>
+            </div>
+            <div class="prospex-calculator_met prospex-calculator_met-hlg">
+              <div>
+                <div class="prospex-calculator_met-lbl">Total royalty payments (mine life)</div>
+                <div class="prospex-calculator_met-sub">At projected revenue less allowable deductions</div>
+              </div>
+              <span class="prospex-calculator_met-val prospex-calculator_gold" id="r-royt">A$88.2M</span>
+            </div>
+            <div class="prospex-calculator_met prospex-calculator_met-hlg">
+              <div class="prospex-calculator_met-lbl">Revenue retained after royalty</div>
+              <span class="prospex-calculator_met-val prospex-calculator_good" id="r-ret">98.0% of gross revenue retained</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- NAV card -->
+      <div class="prospex-calculator_card" style="border-top:3px solid var(--prospex-gold);">
+        <div class="prospex-calculator_card-hd">
+          <div class="prospex-calculator_card-dot" style="background:var(--prospex-gold)"></div>
+          <div class="prospex-calculator_card-title">Royalty Valuation</div>
+          <span class="prospex-calculator_bdg prospex-calculator_gold">Buyer's perspective</span>
+        </div>
+        <div class="prospex-calculator_metrics" style="display:grid;grid-template-columns:1fr 1fr;">
+          <div class="prospex-calculator_met">
+            <div><div class="prospex-calculator_met-lbl">Royalty price (= capital raised)</div><div class="prospex-calculator_met-sub">What the miner receives</div></div>
+            <span class="prospex-calculator_met-val prospex-calculator_navy" id="r-royprice">A$25.0M</span>
+          </div>
+          <div class="prospex-calculator_met">
+            <div><div class="prospex-calculator_met-lbl">NPV of cashflows at buyer's rate</div><div class="prospex-calculator_met-sub">What the royalty is worth at <span id="r-dr-inline">8.0%</span> discount rate</div></div>
+            <span class="prospex-calculator_met-val prospex-calculator_gold" id="r-nav">A$48.0M</span>
+          </div>
+          <div class="prospex-calculator_met">
+            <div><div class="prospex-calculator_met-lbl">Price-to-NAV multiple</div><div class="prospex-calculator_met-sub">Buyer pays price ÷ NPV — below 1× = buyer discount, above 1× = premium</div></div>
+            <span class="prospex-calculator_met-val" id="r-navr" style="color: var(--prospex-gold);">0.52× price-to-NAV</span>
+          </div>
+          <div class="prospex-calculator_met">
+            <div><div class="prospex-calculator_met-lbl">Lead time to production</div><div class="prospex-calculator_met-sub">Pre-production discount applies</div></div>
+            <span class="prospex-calculator_met-val prospex-calculator_navy" id="r-lead">1.1 years</span>
+          </div>
+        </div>
+        <!-- Market benchmark range -->
+        <div style="padding:12px 18px;background:#faf8f3;border-top:1px solid var(--prospex-bdr);">
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--prospex-t3);margin-bottom:8px;">Market benchmark — typical price-to-NAV range</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="flex:1;position:relative;height:28px;background:#e8eef6;border-radius:5px;overflow:hidden;">
+              <div id="bench-range-fill" style="position: absolute; top: 0px; bottom: 0px; background: rgba(189, 150, 83, 0.25); border: 1px solid rgba(189, 150, 83, 0.5); border-radius: 4px; transition: left 0.4s, width 0.4s; left: 25%; width: 15%;"></div>
+              <div id="bench-marker" style="position: absolute; top: 3px; bottom: 3px; width: 3px; background: var(--prospex-bull-m); border-radius: 2px; transition: left 0.4s; left: 26.1%;" title="Your implied multiple"></div>
+              <!-- Scale labels -->
+              <div style="position:absolute;inset:0;display:flex;justify-content:space-between;padding:0 6px;align-items:center;pointer-events:none;">
+                <span style="font-size:9px;color:var(--prospex-t3);">0×</span>
+                <span style="font-size:9px;color:var(--prospex-t3);">0.5×</span>
+                <span style="font-size:9px;color:var(--prospex-t3);">1.0×</span>
+                <span style="font-size:9px;color:var(--prospex-t3);">1.5×</span>
+                <span style="font-size:9px;color:var(--prospex-t3);">2.0×</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:7px;">
+            <span style="font-size:10.5px;color:var(--prospex-t2);" id="bench-label">Non-precious · Development stage · typical range: 0.5× – 0.8×</span>
+            <div style="display:flex;align-items:center;gap:6px;font-size:9.5px;color:var(--prospex-t3);">
+              <span style="display:inline-block;width:14px;height:8px;background:rgba(189,150,83,.35);border:1px solid rgba(189,150,83,.5);border-radius:2px;"></span>Market range
+              <span style="display:inline-block;width:4px;height:12px;background:var(--prospex-bear-m);border-radius:1px;margin-left:4px;"></span>Your multiple
+            </div>
+          </div>
+        </div>
+        <div class="prospex-calculator_nav-note" id="nav-note">At 0.52×, your implied price-to-NAV multiple sits within the typical market range of 0.5×–0.8× for a non-precious development stage project. This is a commercially realistic transaction — the royalty price is consistent with what informed buyers would expect to pay at this stage. With 1.1 years to production, the pre-production discount is the dominant pricing factor — buyers reduce their offer the further a project is from first cashflow, reflecting time value of money and development risk. As the project advances toward production, expect the buyer discount rate to compress and the achievable multiple to improve.</div>
+      </div>
+
+      <!-- Ownership -->
+      <div class="prospex-calculator_card" style="overflow:hidden;">
+        <div class="prospex-calculator_card-hd">
+          <div class="prospex-calculator_card-dot" style="background:var(--prospex-navy)"></div>
+          <div class="prospex-calculator_card-title">Share Register — Before vs After</div>
+        </div>
+
+        <!-- Two column comparison -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--prospex-bdr);">
+
+          <!-- Equity column -->
+          <div style="padding:18px 20px;border-right:1px solid var(--prospex-bdr);">
+            <div style="font-size:9px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--prospex-bear-d);margin-bottom:12px;">After Equity Raise</div>
+
+            <!-- Stacked bar -->
+            <div style="height:52px;border-radius:7px;overflow:hidden;display:flex;margin-bottom:10px;box-shadow:inset 0 1px 3px rgba(0,0,0,.08);">
+              <div class="prospex-calculator_own-seg" id="own-ex" style="background: var(--prospex-navy); width: 80.5%; justify-content: flex-start; padding-left: 12px; font-size: 12px;">
+                <span id="own-ex-label">81%</span>
+              </div>
+              <div class="prospex-calculator_own-seg" id="own-nw" style="background: var(--prospex-bear-m); width: 19.5%; font-size: 12px;">
+                <span id="own-nw-label">19%</span>
+              </div>
+            </div>
+
+            <!-- Legend -->
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--prospex-t2);">
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--prospex-navy);flex-shrink:0;"></div>
+                <span>Existing shareholders</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--prospex-t2);">
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--prospex-bear-m);flex-shrink:0;"></div>
+                <span>New placement holders</span>
+                <span style="font-size:9.5px;color:var(--prospex-bear-d);font-weight:700;">ongoing dilution</span>
+              </div>
+            </div>
+
+            <!-- Impact note -->
+            <div style="margin-top:12px;padding:9px 11px;background:var(--prospex-bear-lt);border-radius:5px;border:1px solid rgba(181,43,43,.12);">
+              <div style="font-size:10px;font-weight:700;color:var(--prospex-bear-d);margin-bottom:2px;">Ongoing dilution to existing holders</div>
+              <div style="font-size:10px;color:#8b2020;line-height:1.45;">New shareholders participate in earnings from this project and all other assets in the company for the duration of the mine life.</div>
+            </div>
+          </div>
+
+          <!-- Royalty column -->
+          <div style="padding:18px 20px;">
+            <div style="font-size:9px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--prospex-bull-d);margin-bottom:12px;">After Royalty Finance</div>
+
+            <!-- Full bar -->
+            <div style="height:52px;border-radius:7px;overflow:hidden;display:flex;margin-bottom:10px;box-shadow:inset 0 1px 3px rgba(0,0,0,.08);">
+              <div class="prospex-calculator_own-seg" style="background:var(--prospex-bull-m);width:100%;font-size:12px;letter-spacing:.3px;">100% existing holders</div>
+            </div>
+
+            <!-- Legend -->
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--prospex-t2);">
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--prospex-bull-m);flex-shrink:0;"></div>
+                <span>Existing shareholders</span>
+                <span style="font-size:9.5px;color:var(--prospex-bull-d);font-weight:700;">intact</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--prospex-t2);">
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--prospex-gold);flex-shrink:0;"></div>
+                <span>Royalty holders — asset-level only</span>
+              </div>
+            </div>
+
+            <!-- Impact note -->
+            <div style="margin-top:12px;padding:9px 11px;background:var(--prospex-bull-lt);border-radius:5px;border:1px solid rgba(30,122,74,.15);">
+              <div style="font-size:10px;font-weight:700;color:var(--prospex-bull-d);margin-bottom:2px;">No equity dilution</div>
+              <div style="font-size:10px;color:#1a5c35;line-height:1.45;">Royalty attaches only to this project's revenue — all other assets remain unencumbered.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ProspEx advantages strip -->
+        <div style="padding:16px 20px;background:#fafbfc;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--prospex-t3);margin-bottom:2px;">ProspEx advantages</div>
+
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--prospex-gold-pale);border:1px solid rgba(189,150,83,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;">✦</div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--prospex-navy);margin-bottom:2px;">Shareholder participation</div>
+              <div style="font-size:10.5px;color:var(--prospex-t2);line-height:1.5;">Eligible existing shareholders can invest in the royalty raise directly — accessing the cashflow stream alongside new wholesale investors.</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:var(--prospex-bdr);"></div>
+
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div style="width:28px;height:28px;border-radius:50%;background:#eef4ff;border:1px solid rgba(30,64,175,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;">↩</div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--prospex-navy);margin-bottom:2px;">Gradual buyback — on your terms</div>
+              <div style="font-size:10.5px;color:var(--prospex-t2);line-height:1.5;">Because royalties are issued fractionally across many holders, the miner can make offers to buy back units incrementally through the ProspEx secondary market — without needing to repurchase the whole royalty at once, which is what makes traditional buybacks prohibitive on cash flow.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cost of Capital Comparison -->
+      <div class="prospex-calculator_card">
+        <div class="prospex-calculator_card-hd">
+          <div class="prospex-calculator_card-dot" style="background:var(--prospex-navy)"></div>
+          <div class="prospex-calculator_card-title">Cost of Capital Comparison</div>
+          <span class="prospex-calculator_bdg" style="background:#eef4ff;color:#1e40af;border:1px solid rgba(30,64,175,.15);">Miner's perspective</span>
+        </div>
+
+        <!-- Column headers -->
+        <div style="display:grid;grid-template-columns:180px 1fr 1fr;background:#f5f7fa;border-bottom:1px solid var(--prospex-bdr);padding:9px 18px;gap:0;align-items:center;">
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--prospex-t3);">Metric</div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--prospex-bear-d);text-align:center;">Equity Raise</div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--prospex-bull-d);text-align:center;">Royalty Finance</div>
+        </div>
+
+        <!-- Row 1: Cost of capital (IRR) -->
+        <div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid var(--prospex-bdr);align-items:stretch;">
+          <div style="padding:14px 18px;border-right:1px solid var(--prospex-bdr);background:#fafbfc;">
+            <div style="font-size:11.5px;font-weight:700;color:var(--prospex-t1);margin-bottom:3px;">Cost of capital</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);line-height:1.4;">Annualised cost to the miner — what the capital provider earns. Lower is cheaper.</div>
+          </div>
+          <div style="padding:14px 18px;border-right:1px solid var(--prospex-bdr);text-align:center;">
+            <div style="font-size: 26px; font-weight: 800; line-height: 1; color: var(--prospex-bear-d);" id="brd-eq-irr">58.2%</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);margin-top:4px;">p.a. to equity investor</div>
+            <div style="font-size:9px;color:var(--prospex-t3);margin-top:2px;">at <span id="brd-spg-note">8.0%</span> share price growth</div>
+          </div>
+          <div style="padding:14px 18px;text-align:center;">
+            <div style="font-size: 26px; font-weight: 800; line-height: 1; color: var(--prospex-bull-d);" id="brd-roy-irr">15.6%</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);margin-top:4px;">p.a. to royalty buyer</div>
+            <div style="font-size:9px;color:var(--prospex-t3);margin-top:2px;">paying A$<span id="brd-cap-note">25</span>M royalty price</div>
+          </div>
+        </div>
+
+        <!-- Row 2: Payback -->
+        <div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid var(--prospex-bdr);align-items:stretch;">
+          <div style="padding:14px 18px;border-right:1px solid var(--prospex-bdr);background:#fafbfc;">
+            <div style="font-size:11.5px;font-weight:700;color:var(--prospex-t1);margin-bottom:3px;">Payback period</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);line-height:1.4;">Years until the miner has paid out more than it raised. Longer is better.</div>
+          </div>
+          <div style="padding:14px 18px;border-right:1px solid var(--prospex-bdr);text-align:center;">
+            <div style="font-size: 26px; font-weight: 800; line-height: 1; color: var(--prospex-bear-d);" id="brd-eq-pb">1.7 yrs</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);margin-top:4px;">yrs to repay via earnings</div>
+          </div>
+          <div style="padding:14px 18px;text-align:center;">
+            <div style="font-size: 26px; font-weight: 800; line-height: 1; color: var(--prospex-bull-d);" id="brd-roy-pb">4.3 yrs</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);margin-top:4px;">yrs to repay via royalty</div>
+          </div>
+        </div>
+
+        <!-- Row 3: Total payout multiple -->
+        <div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid var(--prospex-bdr);align-items:stretch;">
+          <div style="padding:14px 18px;border-right:1px solid var(--prospex-bdr);background:#fafbfc;">
+            <div style="font-size:11.5px;font-weight:700;color:var(--prospex-t1);margin-bottom:3px;">Total payout multiple</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);line-height:1.4;">For every A$1 raised, how much flows out over the mine life. Lower is better.</div>
+          </div>
+          <div style="padding:14px 18px;border-right:1px solid var(--prospex-bdr);text-align:center;">
+            <div style="font-size: 26px; font-weight: 800; line-height: 1; color: var(--prospex-bear-d);" id="brd-eq-mult">8.71×</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);margin-top:4px;">× in foregone earnings</div>
+          </div>
+          <div style="padding:14px 18px;text-align:center;">
+            <div style="font-size: 26px; font-weight: 800; line-height: 1; color: var(--prospex-bull-d);" id="brd-roy-mult">3.53×</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);margin-top:4px;">× in total royalty payments</div>
+          </div>
+        </div>
+
+        <!-- Row 4: Earnings impact — like-for-like -->
+        <div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid var(--prospex-bdr);align-items:stretch;">
+          <div style="padding:14px 18px;border-right:1px solid var(--prospex-bdr);background:#fafbfc;">
+            <div style="font-size:11.5px;font-weight:700;color:var(--prospex-t1);margin-bottom:3px;">Cumulative earnings impact</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);line-height:1.4;">Total reduction in net profit over the mine life. Like-for-like on an earnings basis. Lower is better.</div>
+          </div>
+          <div style="padding:14px 18px;border-right:1px solid var(--prospex-bdr);text-align:center;">
+            <div style="font-size: 22px; font-weight: 800; line-height: 1; color: var(--prospex-bear-d);" id="brd-eq-earn">A$217.9M</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);margin-top:4px;">foregone net profit</div>
+            <div style="font-size:9px;color:var(--prospex-t3);margin-top:2px;">EPS reduction × new shares × mine life</div>
+          </div>
+          <div style="padding:14px 18px;text-align:center;">
+            <div style="font-size: 22px; font-weight: 800; line-height: 1; color: var(--prospex-bull-d);" id="brd-roy-earn">A$17.6M</div>
+            <div style="font-size:9.5px;color:var(--prospex-t3);margin-top:4px;">royalty earnings drag</div>
+            <div style="font-size:9px;color:var(--prospex-t3);margin-top:2px;">royalty payments × net margin × mine life</div>
+          </div>
+        </div>
+
+        <!-- Summary bar -->
+        <div style="padding:13px 18px;background:var(--prospex-navy);display:flex;align-items:center;gap:12px;">
+          <span style="font-size:16px;flex-shrink:0;">⚖</span>
+          <span style="font-size:12px;font-weight:700;color:#fff;line-height:1.5;" id="brd-summary">Royalty is the lower cost of capital on all four measures — lower annualised rate, slower payback drain, lower total payout, and less cumulative earnings drag over the mine life.</span>
+        </div>
+
+        <!-- Key -->
+        <div style="padding:10px 18px;background:#f8f9fb;font-size:10px;color:var(--prospex-t3);line-height:1.6;">
+          <strong style="color:var(--prospex-t2);">Green</strong> = lower cost to the miner on that metric.
+          <strong style="color:var(--prospex-t2);">Cost of capital</strong> = annualised rate the miner pays for money — equity IRR assumes share price grows at the stated rate p.a. plus earnings dividends; royalty IRR is back-calculated from the buyer paying the royalty price.
+          <strong style="color:var(--prospex-t2);">Payback:</strong> longer = more favourable for the miner (slower cash drain).
+          <strong style="color:var(--prospex-t2);">Payout multiple:</strong> lower = less total cash given back per dollar raised.
+          <strong style="color:var(--prospex-t2);">Earnings impact:</strong> cumulative reduction in net profit — equity drag = foregone EPS on new shares; royalty drag = royalty payments × net margin. Like-for-like on an earnings basis.
+        </div>
+      </div>
+
+      <!-- Verdict -->
+      <div class="prospex-calculator_verdict">
+        <div class="prospex-calculator_v-eye">ProspEx Analysis</div>
+        <div class="prospex-calculator_v-head" id="v-head">Royalty finance is the lower cost of capital on a like-for-like basis</div>
+        <div class="prospex-calculator_v-body" id="v-body">A 2.00% royalty on A$300M revenue costs A$5.9M per year. The royalty buyer, paying A$25M, earns an implied IRR of 15.6% — versus 58.2% for an equity investor assuming 8.0% p.a. share price growth. Total royalty payments of A$88.2M represent a 3.53× payout multiple, versus 8.71× for equity. No dilution, no placement discount, and no permanent transfer of equity ownership.</div>
+        <div style="margin-bottom:18px;padding:12px 16px;background:rgba(255,255,255,.07);border-radius:7px;border:1px solid rgba(189,150,83,.2);">
+          <div style="font-size:9px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:rgba(189,150,83,.7);margin-bottom:7px;">Why work with ProspEx</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.7;">
+            ProspEx runs a <strong style="color:rgba(255,255,255,.85);">full competitive capital raise process</strong> — approaching listed royalty companies, institutional investors, family offices, and wholesale investors simultaneously so you receive the best available terms.<br><br>
+            Your royalty is issued <strong style="color:rgba(255,255,255,.85);">fractionally across a broad and diversified investor base</strong> under a single agreement. Where eligible, existing shareholders can be offered the opportunity to participate as royalty holders — giving your register a direct interest in the royalty cashflow stream. Larger institutional investors can participate as <strong style="color:rgba(255,255,255,.85);">cornerstone participants</strong> alongside the broader wholesale market.<br><br>
+            ProspEx's platform is designed to support a <strong style="color:rgba(255,255,255,.85);">secondary market for royalty interests</strong> — creating a mechanism for the miner to make offers to repurchase units incrementally over time, without the cash flow burden of buying back the royalty in its entirety — a flexibility that is not available under a conventional bilateral royalty arrangement.
+          </div>
+        </div>
+        <div class="prospex-calculator_v-actions">
+          <button type="button" class="prospex-calculator_v-cta" data-prospex-action="contact" data-prospex-mailto="mailto:kassia@prospexgroup.com.au?subject=Royalty Finance Enquiry">
+            Talk to ProspEx about your project
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </button>
+          <button type="button" class="prospex-calculator_v-cta-secondary" data-prospex-action="share">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="12" cy="3" r="1.8" stroke="currentColor" stroke-width="1.5"></circle><circle cx="12" cy="13" r="1.8" stroke="currentColor" stroke-width="1.5"></circle><circle cx="4" cy="8" r="1.8" stroke="currentColor" stroke-width="1.5"></circle><path d="M10.3 4.1L5.7 6.9M10.3 11.9L5.7 9.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+            Share these results
+          </button>
+          <button type="button" class="prospex-calculator_v-cta-secondary" data-prospex-action="export-pdf">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            Save as PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="prospex-calculator_method">
+        <strong>Methodology:</strong><br>
+        <strong>Equity IRR:</strong> the annualised return to placement investors, assuming annual dividends from net earnings plus share price appreciation at the stated growth rate. Calculated via Newton-Raphson IRR solver.<br>
+        <strong>Royalty IRR:</strong> back-calculated from the buyer paying the royalty price (= capital raised), receiving annual royalty payments from project start date.<br>
+        <strong>Payback period:</strong> years until cumulative distributions to the capital provider (earnings to shareholders / royalty payments) equal the capital raised.<br>
+        <strong>Payout multiple:</strong> total distributions over mine life ÷ capital raised. Foregone earnings = revenue × net margin ÷ shares × new shares × mine life.<br>
+        <strong>Royalty NAV:</strong> DCF of royalty cashflows discounted at buyer's rate from project start, mid-year convention.<br>
+        All figures pre-tax, flat revenue assumed. Indicative only — not financial advice.
+      </div>
+
+      <!-- Multi-project callout -->
+      <div class="prospex-calculator_multi-note" style="background:var(--prospex-navy);border-radius:10px;padding:20px 22px;">
+        <div style="font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(189,150,83,.7);margin-bottom:8px;">Context — Multi-Project Companies &amp; Royalty Holders</div>
+        <div style="font-size:14px;font-weight:800;color:var(--prospex-gold-lt);margin-bottom:10px;line-height:1.3;">This analysis understates the cost of equity for companies with multiple projects</div>
+        <div style="font-size:11.5px;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:14px;">
+          When you issue equity to fund one project, new shareholders receive a proportional claim on <em style="color:rgba(255,255,255,.85);">every</em> project in the company — current and future. The foregone earnings above only captures dilution against this project's revenue. The true cost is higher once you include earnings from your other projects that new shareholders will also participate in. A royalty is tied exclusively to this project's gross revenue — your other assets, exploration licences, and future discoveries remain entirely unencumbered.
+        </div>
+        <div style="height:1px;background:rgba(189,150,83,.2);margin-bottom:14px;"></div>
+        <div style="font-size:12px;font-weight:700;color:var(--prospex-gold-lt);margin-bottom:8px;">For royalty holders — why asset-level exposure is a structural advantage</div>
+        <div style="font-size:11.5px;color:rgba(255,255,255,.6);line-height:1.7;">
+          A royalty holder's position is asset-specific by design. By attaching to a single asset's revenue rather than the equity of a company, the royalty holder achieves <em style="color:rgba(255,255,255,.85);">cashflow seniority</em> over equity holders, <em style="color:rgba(255,255,255,.85);">dilution immunity</em> (the royalty rate cannot be reduced by future equity raises or capital structure changes), and <em style="color:rgba(255,255,255,.85);">structural longevity</em> — the royalty survives changes in ownership, corporate restructures, and project restarts that would impair equity value. Where an equity investor's return is tied to corporate execution and strategy, the royalty holder's return is tied to the underlying resource.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
