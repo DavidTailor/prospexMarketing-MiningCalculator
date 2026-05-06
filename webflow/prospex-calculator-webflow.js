@@ -78,8 +78,6 @@ $('i-stage').addEventListener('change', function(){
   }
   calc();
 });
-$('i-ticker').addEventListener('keydown',e=>{ if(e.key==='Enter') lookupTicker(); });
-
 const fM  = (v,dp=1)=>'A$'+v.toFixed(dp)+'M';
 const fP  = (v,dp=1)=>v.toFixed(dp)+'%';
 const fSh = v=>v.toFixed(1)+'M shares';
@@ -138,8 +136,6 @@ function resetInputs(){
   $('i-producing').checked=false;
   $('preprod-fields').style.display='block';
   $('i-stage').value='dev';
-  $('i-ticker').value='';
-  $('s-bar').style.display='none';
   setMode('discount');
   calc();
 }
@@ -151,10 +147,7 @@ function updateProgress(){
     const el=$(id); if(!el) return false;
     return el.value !== DEFAULTS[id];
   }).length;
-  const ticker = ($('i-ticker').value||'').trim();
-  const total  = keys.length + (ticker ? 1 : 0);
-  const score  = changed + (ticker ? 1 : 0);
-  const pct    = Math.round((score / keys.length) * 100);
+  const pct    = Math.round((changed / keys.length) * 100);
   $('prog-fill').style.width = Math.min(100,pct)+'%';
   $('prog-pct').textContent  = Math.min(100,pct)+'%';
 }
@@ -202,21 +195,36 @@ function loadFromURL(){
 
 // PDF export
 function exportPDF(){
+  const existingStamp = $('print-stamp');
+  if(existingStamp) existingStamp.remove();
+
+  document.body.classList.add('prospex-calculator_pdf-mode');
+  root.classList.add('prospex-calculator_is-printing');
+
   // Add a print timestamp line temporarily
   const stamp = document.createElement('div');
   stamp.dataset.prospexId = 'print-stamp';
   stamp.id = `print-stamp-${instanceId}`;
-  stamp.style.cssText = 'font-size:10px;color:#7a8fa8;text-align:right;padding:8px 24px 0;font-style:italic;';
-  const ticker = ($('i-ticker').value||'').trim().toUpperCase();
+  stamp.className = 'prospex-calculator_print-stamp';
   const dateStr = new Date().toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
-  const tickerSuffix = ticker ? ' — ' + ticker : '';
-  stamp.textContent = `ProspEx Equity vs Royalty Analysis${tickerSuffix} · Generated ${dateStr} · Indicative only, not financial advice`;
+  stamp.textContent = `ProspEx Equity vs Royalty Analysis · Generated ${dateStr} · Indicative only, not financial advice`;
   root.querySelector('.prospex-calculator_wrap').prepend(stamp);
 
-  window.print();
+  let cleanedUp = false;
+  let fallbackTimer;
+  const cleanup = () => {
+    if(cleanedUp) return;
+    cleanedUp = true;
+    root.classList.remove('prospex-calculator_is-printing');
+    document.body.classList.remove('prospex-calculator_pdf-mode');
+    const s=$('print-stamp'); if(s) s.remove();
+    if(fallbackTimer) clearTimeout(fallbackTimer);
+    window.removeEventListener('afterprint', cleanup);
+  };
 
-  // Remove after print dialog closes
-  setTimeout(()=>{ const s=$('print-stamp'); if(s) s.remove(); }, 1000);
+  window.addEventListener('afterprint', cleanup, {once:true});
+  window.print();
+  fallbackTimer = setTimeout(cleanup, 30000);
 }
 
 function calc(){
@@ -453,50 +461,9 @@ function _calc(){
   }
 } // end _calc
 
-// Ticker lookup
-async function lookupTicker(){
-  const raw=($('i-ticker').value||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
-  const btn=$('lup-btn'), sb=$('s-bar');
-  if(!raw){showS('err','Enter an ASX ticker — e.g. MIN, PLS, LTR');return;}
-  btn.textContent='Loading…'; btn.disabled=true;
-  showS('loading','Looking up '+raw+'…');
-  const url=`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${raw}.AX?modules=price,defaultKeyStatistics`;
-  try{
-    const controller = new AbortController();
-    const timeoutId = setTimeout(()=>controller.abort(),10000);
-    const r=await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,{signal:controller.signal});
-    clearTimeout(timeoutId);
-    if(!r.ok) throw new Error();
-    const d=JSON.parse((await r.json()).contents);
-    const res=d?.quoteSummary?.result?.[0];
-    if(!res) throw new Error('not found');
-    const pd=res.price, sd=res.defaultKeyStatistics;
-    const price=pd?.regularMarketPrice?.raw;
-    const sharesRaw=sd?.sharesOutstanding?.raw||pd?.sharesOutstanding?.raw;
-    if(!price) throw new Error('no price');
-    $('i-price').value=price.toFixed(3);
-    if(sharesRaw) $('i-shares').value=(sharesRaw/1e6).toFixed(1);
-    $('i-rprice').value=(price*(1-readNum('i-discount',15)/100)).toFixed(3);
-    const name=pd?.longName||pd?.shortName||raw;
-    const shStr=sharesRaw?`· ${(sharesRaw/1e6).toFixed(0)}M shares`:'· enter shares manually';
-    showS('ok',`✓ ${name} (${raw}) — A$${price.toFixed(3)} ${shStr}`);
-    calc();
-  } catch(e){
-    showS('err',`Could not load "${raw}". Check the ticker or enter values manually.`);
-  } finally{ btn.textContent='Look up'; btn.disabled=false; }
-}
-
-function showS(type,msg){
-  const el=$('s-bar'); el.textContent=msg; el.className='prospex-calculator_s-bar prospex-calculator_'+type; el.style.display='block';
-}
-
-
 function bindActions(){
   root.querySelectorAll('[data-prospex-mode]').forEach(btn=>{
     btn.addEventListener('click',()=>setMode(btn.dataset.prospexMode));
-  });
-  root.querySelectorAll('[data-prospex-action="lookup-ticker"]').forEach(btn=>{
-    btn.addEventListener('click',lookupTicker);
   });
   root.querySelectorAll('[data-prospex-action="reset"]').forEach(btn=>{
     btn.addEventListener('click',resetInputs);
